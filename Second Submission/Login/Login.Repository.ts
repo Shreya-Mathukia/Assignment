@@ -51,13 +51,6 @@ return users;
 
 public async login(users: User): Promise<User | null>  {
     const {Email, Password}= users;
-    let data = db.Users.findOne({ where: {Email: Email} });
-    let hashedPassword = db.Users.findOne({attributes: ['Password'] , where: {Email: Email}});
-    if(data != null){              
-        console.log(hashedPassword);
-     
-}
-
-    return data;
+    return db.Users.findOne({ where: {Email: Email} });
 }
 }
