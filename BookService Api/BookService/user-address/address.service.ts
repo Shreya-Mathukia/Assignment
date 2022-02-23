@@ -7,8 +7,8 @@ export class UserAddressService {
         this.addressRepository = addressRepository;
     }
 
-    public async UserAddress(address: {[key: number | string] : UserAddress}): Promise<UserAddress> {
-        return this.addressRepository.UserAddress(address);
+    public async CreateUserAddress(address: UserAddress): Promise<UserAddress> {
+        return this.addressRepository.CreateUserAddress(address);
     }
 
     public async findUserByEmail(Email: string): Promise<User | null> {

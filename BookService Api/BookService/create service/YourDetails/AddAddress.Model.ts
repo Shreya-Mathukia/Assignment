@@ -1,6 +1,6 @@
 import { Joi } from "celebrate";
 
-export const UserAddressSchema = {
+export const  ServiceAddressSchema = {
     addressAdd: {
         body: Joi.object({
             AddressLine1: Joi.string()
@@ -17,11 +17,7 @@ export const UserAddressSchema = {
             State: Joi.string()
                       .example('Gujarat')
                       .description('State of user address'),
-            Mobile: Joi.string()
-                       .required()
-                       .min(10).max(10)
-                       .example('9988776655')
-                       .description('Mobile number of the user'),
+           
         })
     }
 };

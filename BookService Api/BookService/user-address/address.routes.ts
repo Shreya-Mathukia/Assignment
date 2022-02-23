@@ -21,8 +21,8 @@ const repo: UserAddressRepository = new UserAddressRepository();
 const service: UserAddressService = new UserAddressService(repo);
 const controller: UserAddressController = new UserAddressController(service);
 
-userAddressRouter.post('/user-address', celebrate(addressAdd), LoginController.validateToken, controller.UserAddress);
+userAddressRouter.post('/CreateUserAddress', celebrate(addressAdd), LoginController.validateToken, controller.CreateUserAddress);
 
-userAddressRouter.get('/get-user-addresses', LoginController.validateToken, controller.getAddresses);
+userAddressRouter.get('/getUserAddresses', LoginController.validateToken, controller.getAddresses);
 
 export = userAddressRouter;
