@@ -7,9 +7,10 @@ import SignUprouter from "./Login/SignUpRoutes";
 import ForgotPasswordrouter from "./Forgot-Password/ForgotPassword.Router";
 import SetupServiceRouter from "./BookService/SetupService/SetupService.routes";
 import userAddressRouter from "./BookService/user-address/address.routes";
-import scheduleRouter from "./BookService/create service/schedule.routes";
+import scheduleRouter from "./BookService/create service/ScheduleService/schedule.routes";
 import swaggerUi from "swagger-ui-express";
 import internalDoc from "swagger-jsdoc";
+import YourDetailRouter from "./BookService/create service/YourDetails/AddAdress.Routes";
 
 dotenv.config();
 const app = express();
@@ -18,9 +19,9 @@ const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'SignUp LogIn API',
+            title: 'Helperland APIs',
             version: '1.0.0',
-            description: 'SignUp LogIn API for Helperland Project',
+            description: ' API for Helperland Project',
             contact: {
                 name: 'Shreya Mathukia',
                 url: 'http://web1.anasource.com/trainee2021/',
@@ -30,9 +31,10 @@ const swaggerOptions = {
         }
     },
     apis: [
-            
+        "public/Login/SignUpRoutes.js"
           ]
 }
+
 
 const swaggerDocs = internalDoc(swaggerOptions);
 
@@ -50,10 +52,9 @@ app.use('/', ForgotPasswordrouter);
 app.use('/',SetupServiceRouter);
 app.use('/',userAddressRouter);
 app.use('/',scheduleRouter);
+app.use('/',YourDetailRouter);
 
 
-
- app.use('/swagger', swaggerUi.serve, swaggerUi.setup(internalDoc));
 
 app.listen(process.env.PORT, () => {
     console.log(`Server Started at ${process.env.PORT}`)

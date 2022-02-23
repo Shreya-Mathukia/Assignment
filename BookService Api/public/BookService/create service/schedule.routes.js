@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var express_1 = __importDefault(require("express"));
+var schedule_repository_1 = require("./schedule.repository");
+var schedule_model_1 = require("./schedule.model");
+var schedule_service_1 = require("./schedule.service");
+var schedule_controller_1 = require("./schedule.controller");
+var Login_Repository_1 = require("../../Login/Login.Repository");
+var Login_Service_1 = require("../../Login/Login.Service");
+var Login_Controller_1 = require("../../Login/Login.Controller");
+var serviceAdd = schedule_model_1.ServiceRequestSchema.serviceAdd;
+var scheduleRouter = express_1.default.Router();
+var repo1 = new Login_Repository_1.loginRepository();
+var service1 = new Login_Service_1.loginService(repo1);
+var LoginController = new Login_Controller_1.loginController(service1);
+var repo = new schedule_repository_1.ScheduleRepository();
+var service = new schedule_service_1.ScheduleService(repo);
+var controller = new schedule_controller_1.ScheduleController(service);
+scheduleRouter.post('/schedule-plan', LoginController.validateToken, controller.decodeToken, controller.createService);
+module.exports = scheduleRouter;

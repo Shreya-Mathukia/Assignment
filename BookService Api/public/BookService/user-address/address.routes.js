@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var express_1 = __importDefault(require("express"));
+var celebrate_1 = require("celebrate");
+var address_repository_1 = require("./address.repository");
+var address_model_1 = require("./address.model");
+var address_service_1 = require("./address.service");
+var address_controller_1 = require("./address.controller");
+var Login_Repository_1 = require("../../Login/Login.Repository");
+var Login_Service_1 = require("../../Login/Login.Service");
+var Login_Controller_1 = require("../../Login/Login.Controller");
+var addressAdd = address_model_1.UserAddressSchema.addressAdd;
+var userAddressRouter = express_1.default.Router();
+var repo1 = new Login_Repository_1.loginRepository();
+var service1 = new Login_Service_1.loginService(repo1);
+var LoginController = new Login_Controller_1.loginController(service1);
+var repo = new address_repository_1.UserAddressRepository();
+var service = new address_service_1.UserAddressService(repo);
+var controller = new address_controller_1.UserAddressController(service);
+userAddressRouter.post('/CreateUserAddress', (0, celebrate_1.celebrate)(addressAdd), LoginController.validateToken, controller.CreateUserAddress);
+userAddressRouter.get('/getUserAddresses', LoginController.validateToken, controller.getAddresses);
+module.exports = userAddressRouter;
