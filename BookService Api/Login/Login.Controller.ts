@@ -36,7 +36,7 @@ export class loginController {
   };
 
   public login = async (req: Request, res: Response): Promise<Response | void> => {
-    return this.loginService.getUserByEmail(req.body).then((user: User | null | any) =>{
+    return this.loginService.getUserByEmail(req.body.Email).then((user: User | null | any) =>{
       if(!user){
         return res.status(404).json('Sign Up first');
       }
@@ -45,7 +45,7 @@ export class loginController {
           bcrypt.compare(req.body.Password, user.Password).then(async (doMatch:  any) => {
               if(doMatch){
                 const token = this.loginService.generateToken(user.Email!);
-              return this.loginService.getUserByEmail(req.body).then((user: User | null) => {
+              return this.loginService.getUserByEmail(req.body.Email).then((user: User | null) => {
               if( user?.RoleId == '3'){
                 return res.status(200).cookie("token", token, { httpOnly: true, expires: new Date(Date.now()+600000) }).json({
                    message: "Login successfully , Hello Customer"
@@ -65,7 +65,7 @@ export class loginController {
           ).catch((error: Error) => { return res.status(500).json({ error: error });
         });
       }
-    }).catch((error: Error) => { return res.status(500).json({ error: error });
+    }).catch((error: Error) => {console.log(error); return res.status(500).json({ error: error });
   });
   };
 
@@ -78,7 +78,9 @@ export class loginController {
       if(error) {
         return res.status(400).json("Invalid login credentials!!");
       }
-      const { Email } = decodedToken;
+      
+      const Email = decodedToken.Email;
+      console.log(Email);
       if(Email){
         return this.loginService
           .getUserByEmail(Email)
@@ -91,6 +93,7 @@ export class loginController {
             }
           })
           .catch((error: Error) => {
+            console.log(error);
             return res.status(500).json({ error });
           });
         }

@@ -11,7 +11,22 @@ export class ContactusRepository {
     }
 
     public async createUsers(a: ContactUs): Promise<ContactUs> {
-        return db.Contactus.create(a);
+        const { FirstName, LastName, Email, Mobile, Subject,Message, UploadFileName} = a;
+        return db.Contactus.create({
+            FirstName: FirstName,
+
+            LastName: LastName,
+
+            Email: Email,
+
+            Mobile: Mobile,
+  
+            Subject:Subject,
+
+            Message:Message,
+
+            UploadFileName:UploadFileName,
+        });
     }
     
 }

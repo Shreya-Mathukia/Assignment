@@ -19,6 +19,71 @@ var LoginController = new Login_Controller_1.loginController(service1);
 var repo = new address_repository_1.UserAddressRepository();
 var service = new address_service_1.UserAddressService(repo);
 var controller = new address_controller_1.UserAddressController(service);
+
+/**
+ * @swagger
+ * definitions:
+ *  CreateUserAddress:
+ *   type: object
+ *   properties:
+ *    AddressLine1:
+ *     type: string
+ *     description: Street Name
+ *     example: 'Ram Park Colony'
+ *    AddressLine2:
+ *     type: string
+ *     description: House Number
+ *     example: '401 Heet Palace'
+ *    City:
+ *     type: string
+ *     description: City 
+ *     example: 'Rajkot'
+ *    State:
+ *     type: string
+ *     description: State
+ *     example: 'Gujarat'
+ *    Mobile:
+ *     type: string
+ *     description: Mobile number of service provider
+ *     example: '9898077484'
+ */
+
+/**
+ * @swagger
+ * /CreateUserAddress:
+ *   post:
+ *    summary: Create User Address
+ *    description: Create User Address
+ *    requestBody:
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/definitions/CreateUserAddress'
+ *    responses:
+ *     200:
+ *      description: Youe Address added.
+ *     500:
+ *      description: Error
+ *     400:
+ *      description: Authentication Error.
+ */
+
 userAddressRouter.post('/CreateUserAddress', (0, celebrate_1.celebrate)(addressAdd), LoginController.validateToken, controller.CreateUserAddress);
+
+/**
+ * @swagger
+ * /getUserAddresses:
+ *  get:
+ *   summary: get all address of logged in user.
+ *   description: get all address of logged in user.
+ *   responses:
+ *    200:
+ *     description: List of Addresses.
+ *    500:
+ *     description: error
+ */
+
+
+
 userAddressRouter.get('/getUserAddresses', LoginController.validateToken, controller.getAddresses);
 module.exports = userAddressRouter;

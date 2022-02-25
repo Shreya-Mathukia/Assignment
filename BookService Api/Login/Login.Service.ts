@@ -8,8 +8,8 @@ export class loginService {
         this.loginRepository = loginRepository;
     }
 
-    public async getUserByEmail(users: User): Promise<User | null> {
-        return this.loginRepository.getUserByEmail(users);
+    public async getUserByEmail(Email: string) {
+        return this.loginRepository.getUserByEmail(Email);
     }
 
     public async createCustomer(users: User): Promise<User> {

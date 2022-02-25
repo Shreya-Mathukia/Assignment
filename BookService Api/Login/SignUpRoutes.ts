@@ -2,10 +2,11 @@ import express from "express"
 import { loginRepository } from "./Login.Repository";
 import { loginService } from "./Login.Service";
 import { loginController } from "./Login.Controller";
-
+import { LogInSchema } from "./Login.Model";
+import { celebrate } from 'celebrate';
 
 const SignUprouter: express.Router = express.Router();
-
+const {signupAdd} =LogInSchema;
 const repo: loginRepository = new loginRepository();
 const service: loginService= new loginService(repo);
 const controller: loginController = new loginController(service);
@@ -24,10 +25,6 @@ const controller: loginController = new loginController(service);
  *     type: string
  *     description: Last name of customer
  *     example: 'Patel'
- *    Email:
- *     type: string
- *     description: Email of customer
- *     example: 'ShreyaMathukia@gmail.com'
  *    Password:
  *     type: string
  *     description: Password of customer
@@ -64,7 +61,7 @@ const controller: loginController = new loginController(service);
  *      description: failure in creating customer
  */
 
-SignUprouter.post('/CreateAnAccount', controller.createCustomer);
+SignUprouter.post('/CreateAnAccount',celebrate(signupAdd), controller.createCustomer);
 
 /**
  * @swagger
@@ -116,6 +113,6 @@ SignUprouter.post('/CreateAnAccount', controller.createCustomer);
  *      description: failure in creating service provider
  */
 
-SignUprouter.post('/BecomeHelper',controller.createServiceProvider);
+SignUprouter.post('/BecomeHelper',celebrate(signupAdd),controller.createServiceProvider);
 
 export = SignUprouter;

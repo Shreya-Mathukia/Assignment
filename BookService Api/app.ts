@@ -31,7 +31,15 @@ const swaggerOptions = {
         }
     },
     apis: [
-        "public/Login/SignUpRoutes.js"
+        "public/ContactUs/routes.js",
+        "public/Login/SignUpRoutes.js",
+        "public/Login/LoginRoutes.js",
+        "public/Forgot-Password/ForgotPassword.Router.js",
+        "public/BookService/SetupService/SetupService.routes.js",
+        "public/BookService/user-address/address.routes.js",
+        "public/BookService/create service/ScheduleService/schedule.routes.js",
+        "public/BookService/create service/YourDetails/AddAddress.Routes.js"
+
           ]
 }
 

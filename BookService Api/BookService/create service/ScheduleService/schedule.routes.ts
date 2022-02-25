@@ -21,6 +21,59 @@ const repo: ScheduleRepository = new ScheduleRepository();
 const service: ScheduleService = new ScheduleService(repo);
 const controller: ScheduleController = new ScheduleController(service);
 
+
+/**
+ * @swagger
+ * definitions:
+ *  ScheduleandPlan:
+ *   type: object
+ *   properties:
+ *    ServiceStartDate:
+ *     type: date
+ *     description: Service date.
+ *     example: '2022-02-18'
+ *    ServiceStartTime:
+ *     type: time
+ *     description: time for providing service.
+ *     example: '10:30'
+ *    ServiceHours:
+ *     type: integer
+ *     description:  time duartion service request.
+ *     example: '3'
+ *    ExtraService:
+ *     type: integer
+ *     description: Number of other extra service you want.
+ *     example: '3'
+ *    Comments:
+ *     type: string
+ *     description: Comments
+ *     example: 'Bring cleaning tools.'
+ *    Haspets:
+ *     type: boolean
+ *     description: user own pets?
+ *     example: 'yes'
+ */
+
+/**
+ * @swagger
+ * /ScheduleAndPlan:
+ *   post:
+ *    summary: ScheduleAndPlan
+ *    description: ScheduleAndPlan
+ *    requestBody:
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/definitions/ScheduleandPlan'
+ *    responses:
+ *     200:
+ *      description: Your Service Scheduled.
+ *     500:
+ *      description: Error
+ *     400:
+ *      description: Authentication Error.
+ */
+
 scheduleRouter.post('/ScheduleAndPlan',celebrate(serviceAdd), LoginController.validateToken, controller.decodeToken, controller.createService);
 
 export = scheduleRouter;

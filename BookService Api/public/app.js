@@ -69,7 +69,14 @@ var swaggerOptions = {
             servers: ["http://localhost:3000"]
         }
     },
-    apis: [ "public/Login/SignUpRoutes.js"]
+    apis: [ "public/ContactUs/routes.js",
+    "public/Login/SignUpRoutes.js",
+    "public/Login/LoginRoutes.js",
+    "public/Forgot-Password/ForgotPassword.Router.js",
+    "public/BookService/SetupService/SetupService.routes.js",
+    "public/BookService/user-address/address.routes.js",
+    "public/BookService/create service/ScheduleService/schedule.routes.js",
+    "public/BookService/create service/YourDetails/AddAddress.Routes.js"]
 };
 var swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));

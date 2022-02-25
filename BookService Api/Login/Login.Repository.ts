@@ -3,6 +3,7 @@ import { Json } from "sequelize/dist/lib/utils";
 import  {db} from "../models/index";
 import { User } from "../models/user";
 import bycryptjs from 'bcryptjs';
+import { EmailOptions } from 'joi';
 
 
 
@@ -49,8 +50,8 @@ public async createServiceProvider(users: User): Promise<User> {
 return users;
 }
 
-public async getUserByEmail(users: User): Promise<User | null>  {
-    const {Email, Password}= users;
+public async getUserByEmail(Email: string){
+    
     return db.Users.findOne({ where: {Email: Email} });
 }
 

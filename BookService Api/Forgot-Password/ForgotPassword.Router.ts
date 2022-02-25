@@ -28,8 +28,8 @@ const controller: ForgotPasswordController = new ForgotPasswordController(servic
  * @swagger
  * /ForgotPassword:
  *   post:
- *    summary: login
- *    description: login
+ *    summary: ForgotPassword
+ *    description: ForgotPassword
  *    requestBody:
  *     content:
  *      application/json:
@@ -64,8 +64,8 @@ ForgotPasswordrouter.post('/ForgotPassword',celebrate(forgot), controller.Forgot
  * @swagger
  * /ResetPassword:
  *   post:
- *    summary: login
- *    description: login
+ *    summary: ResetPassword
+ *    description: ResetPassword
  *    requestBody:
  *     content:
  *      application/json:

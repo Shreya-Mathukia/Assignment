@@ -19,5 +19,56 @@ var LoginController = new Login_Controller_1.loginController(service1);
 var repo = new schedule_repository_1.ScheduleRepository();
 var service = new schedule_service_1.ScheduleService(repo);
 var controller = new schedule_controller_1.ScheduleController(service);
+/**
+ * @swagger
+ * definitions:
+ *  ScheduleandPlan:
+ *   type: object
+ *   properties:
+ *    ServiceStartDate:
+ *     type: date
+ *     description: Service date.
+ *     example: '2022-02-18'
+ *    ServiceStartTime:
+ *     type: time
+ *     description: time for providing service.
+ *     example: '10:30'
+ *    ServiceHours:
+ *     type: integer
+ *     description:  time duartion service request.
+ *     example: '3'
+ *    ExtraService:
+ *     type: integer
+ *     description: Number of other extra service you want.
+ *     example: '3'
+ *    Comments:
+ *     type: string
+ *     description: Comments
+ *     example: 'Bring cleaning tools.'
+ *    Haspets:
+ *     type: boolean
+ *     description: user own pets?
+ *     example: 'yes'
+ */
+
+/**
+ * @swagger
+ * /ScheduleAndPlan:
+ *   post:
+ *    summary: ScheduleAndPlan
+ *    description: ScheduleAndPlan
+ *    requestBody:
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/definitions/ScheduleandPlan'
+ *    responses:
+ *     200:
+ *      description: Your Service Scheduled.
+ *     500:
+ *      description: Error
+ *     400:
+ *      description: Authentication Error.
+ */
 scheduleRouter.post('/ScheduleAndPlan', (0, celebrate_1.celebrate)(serviceAdd), LoginController.validateToken, controller.decodeToken, controller.createService);
 module.exports = scheduleRouter;

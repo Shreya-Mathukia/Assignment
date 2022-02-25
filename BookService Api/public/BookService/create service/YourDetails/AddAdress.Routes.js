@@ -18,5 +18,52 @@ var LoginController = new Login_Controller_1.loginController(service1);
 var repo = new AddAddress_Repository_1.ServiceAddressRepository();
 var service = new AddAdress_Service_1.ServiceAddressService(repo);
 var controller = new AddAddress_Controller_1.ServiceAddressController(service);
+/**
+ * @swagger
+ * definitions:
+ *  YourDetails:
+ *   type: object
+ *   properties:
+ *    AddressLine1:
+ *     type: string
+ *     description: Street Name
+ *     example: 'Ram Park Colony'
+ *    AddressLine2:
+ *     type: string
+ *     description: House Number
+ *     example: '401 Heet Palace'
+ *    City:
+ *     type: string
+ *     description: City 
+ *     example: 'Rajkot'
+ *    State:
+ *     type: string
+ *     description: State
+ *     example: 'Gujarat'
+ *    Mobile:
+ *     type: string
+ *     description: Mobile number of service provider
+ *     example: '9898077484'
+ */
+
+/**
+ * @swagger
+ * /YourDetails:
+ *   post:
+ *    summary: Service Address
+ *    description: Add Service Address
+ *    requestBody:
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/definitions/YourDetails'
+ *    responses:
+ *     200:
+ *      description: Book Service Successful, Notified Service Provider Near you.
+ *     500:
+ *      description: Error
+ *     400:
+ *      description: Authentication Error.
+ */
 YourDetailRouter.post('/YourDetails', LoginController.validateToken, controller.CreateServiceAddress);
 module.exports = YourDetailRouter;

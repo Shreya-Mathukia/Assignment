@@ -24,13 +24,13 @@ export class ContactusController {
     return this.ContactusService
       .createUsers(req.body)
       .then((a: ContactUs) => {
-        return res.status(200).json({ a });
+        return res.status(200).json({ request:a, Message:"Request Created Success."  });
       })
       .catch((error: Error) => {
         return res.status(500).json({
           error: error
         });
-        console.log("not");
+      
       });
   };
 

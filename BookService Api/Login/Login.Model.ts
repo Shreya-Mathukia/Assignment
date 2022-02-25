@@ -13,5 +13,17 @@ export const LogInSchema = {
                          .example('pari123')
                          .description('Password of the user'),
         })
-    }
+    },
+
+    signupAdd: {
+            body: Joi.object({
+                FirstName: Joi.string().required(),
+                LastName: Joi.string().required(),
+                Email: Joi.string().email().required(),
+                Password:Joi.string().min(6).max(15).required(),
+                ConfirmPassword: Joi.any().valid(Joi.ref('Password')).required(),
+                Mobile:Joi.string().required().max(10).min(10),
+    })
+}
+
 }
