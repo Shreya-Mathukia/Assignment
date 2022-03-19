@@ -70,6 +70,7 @@ export class ProfileController {
     public HelperAddress = async(req: Request, res: Response) => {
         if(req.headers.authorization) {
             let flag:number;
+            let adId:any;
             jwt.verify(req.headers.authorization, process.env.SECRET_KEY!, async (error, user: any) => {
                if(error) {
                 return res.status(400).json("Invalid login!")
@@ -80,6 +81,7 @@ export class ProfileController {
                       if(user) {
                         req.body.Mobile = user.Mobile;
                         req.body.UserId = user.id;
+                        
                       }
                     
                 }).catch((error: Error) => {
@@ -89,7 +91,8 @@ export class ProfileController {
                 await  this.ProfileService.findByAddressId(req.body.UserId).then((address)=>
                           {
                          if(address){
-                                  flag= 1;                               
+                                  flag= 1; 
+                                  adId = address.AddressId;                              
                               }
                               else{
                                   flag = 0;
@@ -102,7 +105,7 @@ export class ProfileController {
                         
                 if( flag == 1){
                                 
-                    return this.ProfileService.updateUserAddress( +req.params.Id, req.body ).then((address: any) => {
+                    return this.ProfileService.updateUserAddress( adId, req.body ).then((address: any) => {
                                                     return res.status(200).json({
                                                         Address: address.AddressLine1 + ', ' + address.AddressLine2 + ', ' + address.City  + ', ' + address.PostalCode,
                                                         Message: "Address Updated!"

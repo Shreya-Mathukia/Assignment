@@ -22,7 +22,7 @@ export class ProfileRepository {
     public async updateUserAddress(Id: number,useraddress: any ){
         const {StreetName, HouseNumber, City,  PostalCode, Mobile, Email} = useraddress;
          db.UserAddress.update({ AddressLine1: StreetName, AddressLine2: HouseNumber, City: City, PostalCode: PostalCode, Mobile: Mobile, Email:Email }, { where: { AddressId: Id } });
-        return db.UserAddress.findOne({where: {Address: Id}});
+        return db.UserAddress.findOne({where: {AddressId: Id}});
         }
     
 

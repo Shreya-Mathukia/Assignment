@@ -21,8 +21,8 @@ const service: Service = new Service(repo);
 const controller: Controller = new Controller(service);
 
 HelperBlockCustomerRouter.get('/getAllCustomers', LoginController.validateToken, controller.getAllCustomers);
-HelperBlockCustomerRouter.post('/BlockCustomers', LoginController.validateToken, controller.BlockCustomers);
-HelperBlockCustomerRouter.put('/UnblockCustomers', LoginController.validateToken, controller.UnBlockCustomers);
+HelperBlockCustomerRouter.post('/BlockCustomers/:TargetUserId', LoginController.validateToken, controller.BlockCustomers);
+HelperBlockCustomerRouter.put('/UnblockCustomers/:TargetUserId', LoginController.validateToken, controller.UnBlockCustomers);
 
 
 

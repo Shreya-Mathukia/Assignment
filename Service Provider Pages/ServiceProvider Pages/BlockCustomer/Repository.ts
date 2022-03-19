@@ -9,7 +9,7 @@ export class Repository {
     }
 
     public async getAllRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ attributes:['UserId'], where: { UserId: UserId } });
+        return db.ServiceRequest.findAll({ attributes:['UserId'], where: { ServiceProviderId: UserId } });
     }   
    
     public async getUserDetails(id: number): Promise<User | null> {

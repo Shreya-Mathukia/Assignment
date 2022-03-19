@@ -21,7 +21,7 @@ const service: Service = new Service(repo);
 const controller: Controller = new Controller(service);
 
 HelperNewServiceRequestRouter.get('/getNewServiceRequest', LoginController.validateToken, controller.getNewServiceRequest);
-HelperNewServiceRequestRouter.post('/getNewServiceDetails/:ServiceId', LoginController.validateToken, controller.getServiceDetailsById);
+HelperNewServiceRequestRouter.get('/getNewServiceDetails/:ServiceId', LoginController.validateToken, controller.getServiceDetailsById);
 HelperNewServiceRequestRouter.put('/AcceptServiceRequest/:ServiceId', LoginController.validateToken, controller.AcceptServiceRequest);
 
 

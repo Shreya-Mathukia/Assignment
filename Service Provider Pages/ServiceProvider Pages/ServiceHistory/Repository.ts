@@ -10,7 +10,7 @@ export class Repository {
     }
 
     public async getAllRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { UserId: UserId , Status:'4'} });
+        return db.ServiceRequest.findAll({ where: { ServiceProviderId: UserId , Status:'4'} });
     }
 
     

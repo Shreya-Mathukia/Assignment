@@ -13,8 +13,8 @@ export class Service {
         return this.Repository.findUser(Email);
     }
 
-    public async getAllRequest(UserId: number): Promise<ServiceRequest[]> {
-        return this.Repository.getAllRequest(UserId);
+    public async getAllRequest(): Promise<ServiceRequest[]> {
+        return this.Repository.getAllRequest();
     }
 
     public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
@@ -51,7 +51,9 @@ export class Service {
         let srId;
         let matched = false;
         for (let sr in serviceRequest) {
-          if (serviceRequest[sr].ServiceStartDate.getTime() === date.getTime()) {
+         let date2= new Date(serviceRequest[sr].ServiceStartDate);
+         let date1= new Date(date);
+          if (date2.getTime() === date1.getTime()) {
             const acceptTime = time.toString().split(":");
             if (acceptTime[1] === "30") {
               acceptTime[1] = "0.5";
@@ -70,6 +72,10 @@ export class Service {
               serviceRequest[sr].ServiceHours + serviceRequest[sr].ExtraHours!;
             const totalAcceptTime = acceptStartTime + acceptTotalHour + 1;
             const totalAvailableTime = availableStartTime + availableTotalHour + 1;
+            console.log("acceptStartTime"+acceptStartTime);
+            console.log("acceptTotalHour"+acceptTotalHour);
+            console.log("totalaccept"+totalAcceptTime);
+            console.log("accepttime"+acceptStartTime);
             if (
               availableStartTime >= totalAcceptTime ||
               acceptStartTime >= totalAvailableTime

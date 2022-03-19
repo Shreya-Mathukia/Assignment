@@ -165,7 +165,7 @@ export class Controller {
                 else {
                     return this.Service.UnblockCustomer(spId,+req.params.TargetUserId).then((a)=>{
                         if(a){
-                            return res.status(200).json("Added To Block List.")
+                            return res.status(200).json("Added To UnBlock List.")
                         }
                     }).catch((error: Error) => {
                 return res.status(500).json({ error: error });

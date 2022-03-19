@@ -9,12 +9,12 @@ export class Repository {
         return db.Users.findOne({where: { Email: Email}});
     }
 
-    public async getAllRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { UserId: UserId , Status:'1'} });
+    public async getAllRequest(): Promise<ServiceRequest[]> {
+        return db.ServiceRequest.findAll({ where: {  Status: "1"} });
     }
 
     public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { ServiceProvicerId: Id } });
+        return db.ServiceRequest.findAll({ where: { ServiceProviderId: Id } });
     }
 
     
@@ -27,7 +27,7 @@ export class Repository {
     }
 
     public async getServiceAddress(ServiceRequestId: number): Promise<SRAddress | null> {
-        return db.SRAddress.findOne({ attributes:['AddressLine1 ','AddressLine2','City','PostalCode'], where: { ServiceRequestId: ServiceRequestId}});
+        return db.SRAddress.findOne({ attributes:['AddressLine1','AddressLine2','City','PostalCode'], where: { ServiceRequestId: ServiceRequestId}});
     }
 
     public async getUserDetails(id: number): Promise<User | null> {
@@ -35,7 +35,7 @@ export class Repository {
     }
 
     public async acceptService(Id: number, ServiceId: number) {
-        return db.ServiceRequest.update({ Status: '2',ServiceProvicerId: Id},{ where: { ServiceId: ServiceId } });
+        return db.ServiceRequest.update({ Status: '2', ServiceProviderId: Id},{ where: { ServiceId: ServiceId } });
     }
    
 }

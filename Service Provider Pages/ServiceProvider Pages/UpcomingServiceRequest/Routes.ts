@@ -24,7 +24,7 @@ UpcomingServiceRouter.get('/HelperUpcomingService', LoginController.validateToke
 
 UpcomingServiceRouter.get('/HelperUpcomingServiceDetails/:ServiceId', LoginController.validateToken,  controller.getServiceDetailsById);
 
-UpcomingServiceRouter.put('/HelperCancelService',LoginController.validateToken, controller.CancelService);
+UpcomingServiceRouter.put('/HelperCancelService/:ServiceId',LoginController.validateToken, controller.CancelService);
 
 UpcomingServiceRouter.put('/HelperCompleteService',LoginController.validateToken, controller.CompleteService);
 

@@ -10,7 +10,7 @@ export class Repository {
     }
 
     public async getAllUpcomingRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { UserId: UserId , Status:'2'} });
+        return db.ServiceRequest.findAll({attributes:['UserId','ServiceRequestId','ServiceId','ServiceStartDate', 'ServiceStartTime','ServiceHourlyRate','ServiceHours','ExtraHours','Comments','HasPets','TotalCost','Discount'], where: { ServiceProviderId: UserId , Status:'2'} });
     }
 
     public async getServiceDetailsById(ServiceId: number) {
@@ -18,7 +18,7 @@ export class Repository {
     }
 
     public async getServiceAddress(ServiceRequestId: number): Promise<SRAddress | null> {
-        return db.SRAddress.findOne({ attributes:['AddressLine1 ','AddressLine2','City','PostalCode'], where: { ServiceRequestId: ServiceRequestId}});
+        return db.SRAddress.findOne({ attributes:['AddressLine1','AddressLine2','City','PostalCode'], where: { ServiceRequestId: ServiceRequestId}});
     }
 
     public async getUserDetails(id: number): Promise<User | null> {
@@ -26,7 +26,7 @@ export class Repository {
     }
 
     public async CancelService(ServiceId: number) {
-        return db.ServiceRequest.update({Status: '3',ModifiedBy: '2'}, { where: {ServiceId: ServiceId}});
+        return db.ServiceRequest.update({Status: '3',ModifiedBy: '2',ServiceProviderId: null}, { where: {ServiceId: ServiceId}});
     }
 
     public async CompleteService(ServiceId: number) {

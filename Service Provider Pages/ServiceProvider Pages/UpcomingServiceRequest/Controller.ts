@@ -27,7 +27,7 @@ export class Controller {
                                 if(service) {
                                     if(service.length > 0) {
                                         for(let s in service) {
-                                            
+                                            console.log(service[s]);
                                                 serviceRequest.push(service[s]);
                                             }
                                         if(serviceRequest.length > 0) {
@@ -97,7 +97,8 @@ export class Controller {
          
                 await this.Service.getServiceAddress(srId).then((address) =>{
                       if(address)
-                            {details.AddressDetails = address;}
+                            {
+                                details.AddressDetails = address;}
                        
                         }).catch((error: Error) => {
                                 return res.status(500).json({ error: error });

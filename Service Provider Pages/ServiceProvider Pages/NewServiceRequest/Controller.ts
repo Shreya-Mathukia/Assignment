@@ -38,9 +38,10 @@ export class Controller {
                   });
                 
                   
-                await this.Service.getAllRequest(spId).then((service)=>{
+                await this.Service.getAllRequest().then((service)=>{
                     if(service){
                         serviceList = service;
+                        console.log(service);
                     }
                     else{
                         flag=2;
@@ -79,9 +80,10 @@ export class Controller {
                           }).catch((error: Error) => {
                                   return res.status(500).json({ error: error });
                                 });   
-                 if( Number(userZip) == Number(Spzip)) {
+                                
+                 
                     response.push(details); 
-                 }              
+                             
                                
                                   
                 } 
