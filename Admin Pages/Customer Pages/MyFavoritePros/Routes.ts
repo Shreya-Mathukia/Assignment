@@ -41,7 +41,7 @@ const { favAdd,blockAdd} = FavSchema;
 
 /**
  * @swagger
- * /create-favorite-pros/{spId}:
+ * /AddFavouritePro/{spId}:
  *  post:
  *   summary: Create favorite pros
  *   description: Create favorite pros
@@ -65,7 +65,7 @@ const { favAdd,blockAdd} = FavSchema;
  *    500:
  *     description: Failure
  */
- FavProrouter.post('/create-favorite-pros/:spId', celebrate(favAdd), LoginController.validateToken, controller.FavSP, controller.removeFavSp);
+ FavProrouter.post('/AddFavouritePro/:spId', celebrate(favAdd), LoginController.validateToken, controller.FavSP, controller.removeFavSp);
 
  /**
   * @swagger
@@ -84,7 +84,7 @@ const { favAdd,blockAdd} = FavSchema;
   *    500: 
   *     description: Failure  
   */
-  FavProrouter.get('/get-all-pros', LoginController.validateToken, controller.SPworkedwithCustomer);
+  FavProrouter.get('/getSp', LoginController.validateToken, controller.SPworkedwithCustomer);
  
  /**
   * @swagger
@@ -112,7 +112,7 @@ const { favAdd,blockAdd} = FavSchema;
   *    500:
   *     description: Failure
   */
-  FavProrouter.post('/create-blocked-pros/:spId', celebrate(blockAdd), LoginController.validateToken, controller.blockSP, controller.removeBlockedSp); 
+  FavProrouter.post('/BlockSp/:spId', celebrate(blockAdd), LoginController.validateToken, controller.blockSP, controller.removeBlockedSp); 
 
 
 

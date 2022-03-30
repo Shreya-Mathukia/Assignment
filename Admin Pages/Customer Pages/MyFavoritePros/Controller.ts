@@ -17,14 +17,8 @@ export class Controller {
                     return res.status(400).json("Invalid Login!");
                 }
                 else {
-                    return this.Service
-                      .findByEmail(user.Email)
-                      .then((user) => {
-                          if(user) {
-                            if(Number(user.RoleId) === 1) {
-                                return this.Service
-                                  .findServiceById(user.id)
-                                  .then((service) => {
+                    
+                  return this.Service.findServiceById(user.id).then((service) => {
                                       if(service) {
                                         const spId = this.Service.findAllSpIdWorkedWithCustInPast(service);
                                         if(spId.length > 0) {
@@ -64,15 +58,9 @@ export class Controller {
                                   .catch((error: Error) => {
                                     return res.status(500).json({ error: error });
                                   });
-                            }
-                          }
-                          else {
-                              return res.status(404).json("User not exists!");
-                          }
-                      })
-                      .catch((error: Error) => {
-                        return res.status(500).json({ error: error });
-                      });
+                           
+                          
+                     
                 }
             });
         }
@@ -94,7 +82,7 @@ export class Controller {
                       .findByEmail(user.Email)
                       .then((user) => {
                           if(user) {
-                            if(Number(user.RoleId) === 1) {
+                            if(Number(user.RoleId) === 3) {
                                 req.body.UserId = user.id;
                                 req.body.TargetUserId = req.params.spId;
                                 return this.Service
@@ -203,7 +191,7 @@ export class Controller {
                     .findByEmail(user.Email)
                     .then((user) => {
                         if(user) {
-                          if(Number(user.RoleId) === 1) {
+                          if(Number(user.RoleId) === 3) {
                               return this.Service
                                 .findFavoriteSp(user.id, +req.params.spId)
                                 .then((fav) => {
@@ -270,7 +258,7 @@ export class Controller {
                       .findByEmail(user.Email)
                       .then((user) => {
                           if(user) {
-                            if(Number(user.RoleId) === 1) {
+                            if(Number(user.RoleId) === 3) {
                                 req.body.UserId = user.id;
                                 req.body.TargetUserId = req.params.spId;
                                 return this.Service
@@ -364,7 +352,7 @@ export class Controller {
     };
 
     public removeBlockedSp = async(req: Request, res: Response): Promise<Response | undefined> => {
-      const token = req.headers.authorization || req.header('auth');
+      const token = req.headers.authorization ;
 
       if(token) {
           jwt.verify(token, process.env.SECRET_KEY!, (error, user: any) => {
@@ -376,7 +364,7 @@ export class Controller {
                     .findByEmail(user.Email)
                     .then((user) => {
                         if(user) {
-                          if(Number(user.RoleId)=== 1) {
+                          if(Number(user.RoleId)=== 3) {
                               return this.Service
                                 .findFavoriteSp(user.id, req.body.TargetUserId)
                                 .then((blocked) => {
@@ -386,10 +374,10 @@ export class Controller {
                                             .updateBlockedSp(req.body)
                                             .then((blockedSp) => {
                                                 if(blockedSp) {
-                                                    return res.status(200).json("Blocked Service Provider updated successfully!");
+                                                    return res.status(200).json("Blocked Service Provider  successfully!");
                                                 }
                                                 else {
-                                                    return res.status(400).json("Updation failed!");
+                                                    return res.status(400).json("Update Failed!");
                                                 }
                                               })
                                               .catch((error: Error) => {
@@ -400,7 +388,7 @@ export class Controller {
                                           return res.status(400).json("Service Provider already in unblocked list!");
                                         }
                                         else {
-                                          return res.status(404).json("No helper exists to remove!");
+                                          return res.status(404).json("No helper exists !");
                                         }
                                       }
                                       else {
@@ -426,7 +414,7 @@ export class Controller {
             });
         }
         else {
-            return res.status(400).json("Some error occurred!");
+            return res.status(400).json(" error - header not set properly!");
         }
     };
 

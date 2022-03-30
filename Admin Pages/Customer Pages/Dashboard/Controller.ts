@@ -26,7 +26,7 @@ export class DashboardController {
                 let q:any={};
                 let user: any ={};
                 let sr: any ={};
-                let address: any = {};
+                
                 
                 sr.ServiceId=service[a].ServiceId;
                 sr.ServiceStartDate=service[a].ServiceStartDate;
@@ -36,11 +36,6 @@ export class DashboardController {
                 q.ServiceDetails = sr;
 
                 let {HelperRequest}=service[a];
-
-                
-                user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
-                q.HelperDetails = user;
-
                 if(HelperRequest != null){
                   user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
                   q.HelperDetails = user;
@@ -64,6 +59,7 @@ export class DashboardController {
  
  
       ).catch((error: Error) => {
+        console.log("e"+error);
          return res.status(500).json({
            error: error
          });
@@ -101,18 +97,24 @@ export class DashboardController {
                   let {HelperRequest,ServiceRequestAddress}=service[a];
 
                   
-                  user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
-                  q.HelperDetails = user;
+                  if(HelperRequest != null){
+                    user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
+                    q.HelperDetails = user;
+                  }
+                  else{
+                     q.HelperDetails= null;
+                  }
 
-                  if(ServiceRequestAddress != null){
-                     address.StreetName = ServiceRequestAddress.AddressLine1;
+                  if( ServiceRequestAddress == null){
+                    q.AddressofSr= null;
+                  }
+                  else{
+                    address.StreetName = ServiceRequestAddress.AddressLine1;
                      address.HouseNumber= ServiceRequestAddress.AddressLine2;
                      address.PostalCode= ServiceRequestAddress.PostalCode;
                      address.City = ServiceRequestAddress.City;
-                     q.HelperDetails.AddressofSr= address;
-                  }
-                  else{
-                     q.HelperDetails.AddressofSr= null;
+                     q.AddressofSr= address;
+                     
                   }
                                                                        
                     ans.push(q);
@@ -130,6 +132,7 @@ export class DashboardController {
    
    
              } ).catch((error: Error) => {
+               console.log(error);
            return res.status(500).json({
              error: error
            });
@@ -145,6 +148,8 @@ export class DashboardController {
     let serviceDetails:any;
     let serviceList:any = [];
     let notfound = 0;
+    let StatusFlag:any;
+    let f=0;
     if(token) {
         jwt.verify(token, process.env.SECRET_KEY!, async (error, user: any) => {
             if(error) {
@@ -156,6 +161,7 @@ export class DashboardController {
                     if(service){
                         serviceDetails.TotalHours=service.ExtraHours! + service.ServiceHours;
                         serviceDetails=service;
+                       StatusFlag= serviceDetails.Status;
                         
                     }else{
                         notfound =1;
@@ -165,9 +171,8 @@ export class DashboardController {
                     return res.status(500).json({ error: error });
                   });
 
-                  if(Number(serviceDetails.Status) == 1 ){
+                  if(Number(StatusFlag) == 1 ){                     
                       
-                      let f=0,d=0;
                       await this.DashboardService.RescheduleService(req.body,+req.params.ServiceId).then((s)=>{
                         if(s){
                            f=1;
@@ -175,16 +180,9 @@ export class DashboardController {
                         }).catch((error: Error) => {
                             return res.status(500).json({ error: error });
                         });
-                         
-                        if(f == 1 ){
-                            return res.status(200).json('ServiceDetails Rescheduled!');
-                        } 
-                        else{
-                            return res.status(500).json('Could not update try again')
-                        }   
                     
                   }
-                  else if(Number(serviceDetails.Status) == 2){
+                  else if(Number(StatusFlag) == 2){
                       //check sp available, send mail to  sp;
 
                          
@@ -208,7 +206,7 @@ export class DashboardController {
                                             return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
                                         }
                                         else{
-                                            let f=0,d=0;
+                                            
                                             await this.DashboardService.RescheduleService(req.body , +req.params.ServiceId).then((s)=>{
                                                 if(s){
                                                    f=1;
@@ -216,22 +214,23 @@ export class DashboardController {
                                                 }).catch((error: Error) => {
                                                     return res.status(500).json({ error: error });
                                                 });
-                                                
-                                                 
-                                                if(f == 1 ){
-                                                    return res.status(200).json('ServiceDetails Rescheduled and email sent to Helper');
-                                                } 
-                                                else{
-                                                    return res.status(500).json('Could not update try again')
-                                                }   
-                                        }
+                                        }  
+                                        
                   }
-                  else if(notfound == 1){
-                      return res.status(404).json("No request of given id")
-                  }
-                  else{
-                      return res.status(200).json("Service Request Already Completed");
-                  }
+
+                  if(f == 1 ){
+                    return res.status(200).json('ServiceDetails Rescheduled and email sent to Helper');
+                } 
+                else{
+                        if(notfound == 1){
+                            return res.status(404).json("No request of given id")
+                        }
+                        else{
+                          return res.status(400).json('Could not update try again')
+                        }
+                    
+                }   
+                  
                  
             }
         });

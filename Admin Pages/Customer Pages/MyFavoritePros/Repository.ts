@@ -31,12 +31,12 @@ export class Repository {
     }
 
     public async findByUId(UserId: number): Promise<User | null> {
-        return db.Users.findOne({ where: { UserId: UserId } });
+        return db.Users.findOne({ where: { id: UserId } });
     }
 
     public async findAllSPWorkedWithCustInPast(UserId: number[]): Promise<User[] | null> {
         return db.Users.findAll({
-            where: { UserTypeId: 2, UserId: {
+            where: { RoleId: 2, id: {
                 [Op.or]: UserId
             } },
             include: 'TargetUserId'
