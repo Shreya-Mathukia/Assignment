@@ -23,6 +23,6 @@ const controller: Controller = new Controller(service);
 AdminSRRouter.get('/adminRoutes-getServiceRequests', LoginController.validateToken, controller.getAllServiceRequest);
 AdminSRRouter.put('/adminRoutes-editServiceRequests/:ServiceId', LoginController.validateToken, controller.EditOrRescheduleService);
 AdminSRRouter.put('/adminRoutes-CancelServiceRequests/:ServiceId', LoginController.validateToken, controller.CancelService);
-
+AdminSRRouter.post('/filter-feature_SR',LoginController.validateToken,controller.filter_SR);
 
 export = AdminSRRouter;

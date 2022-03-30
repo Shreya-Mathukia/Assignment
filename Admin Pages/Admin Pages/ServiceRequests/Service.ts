@@ -3,6 +3,7 @@ import { ServiceRequest } from "../../models/servicerequest";
 import { User } from "../../models/user";
 import { SRAddress } from "../../models/servicerequestaddress";
 import { Repository } from "./Repository";
+import { json } from "express";
 
 export class Service {
     public constructor(private readonly Repository: Repository) {
@@ -12,26 +13,18 @@ export class Service {
     public async IsAdmin(Email: string): Promise<User | null> {
         return this.Repository.IsAdmin(Email);
     }
-
-
-    public async getAllRequestIds(): Promise<ServiceRequest[]> {
-        return this.Repository.getAllRequestIds();
+    public async getUserByEmail(Email: string): Promise<User | null> {
+      return this.Repository.getUserByEmail(Email);
+  }
+   public async getAllRequest(){
+        return this.Repository.getAllRequest();
     }
-    public async getRequestDetails(ServiceId: number) {
-        return this.Repository.getRequestDetails(ServiceId);
-    } 
-    public async getServiceAddress(ServiceRequestId: number): Promise<SRAddress | null> {
-        return this.Repository.getServiceAddress(ServiceRequestId);
-    }
-    public async getUserDetails(id: number): Promise<User | null> {
-        return this.Repository.getUserDetails(id);
-    }
+    
 
 
     public async getServiceDetailsById(ServiceId: number) {
         return this.Repository.getServiceById(ServiceId);
     }    
-
     public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
       return this.Repository.getAllRequestofSp(Id);
       }
@@ -53,33 +46,29 @@ export class Service {
         let srId;
         let matched = false;
         for (let sr in serviceRequest) {
-         let date2= new Date(serviceRequest[sr].ServiceStartDate);
-         let date1= new Date(date);
-          if (date2.getTime() === date1.getTime()) {
+          if (date == serviceRequest[sr].ServiceStartDate) {
             const acceptTime = time.toString().split(":");
             if (acceptTime[1] === "30") {
               acceptTime[1] = "0.5";
             }
-            const acceptStartTime =
-              parseFloat(acceptTime[0]) + parseFloat(acceptTime[1]);
+            const acceptStartTime = parseFloat(acceptTime[0]) + parseFloat(acceptTime[1]);
     
-            const availableTime =
-              serviceRequest[sr].ServiceStartTime.toString().split(":");
+            const availableTime = serviceRequest[sr].ServiceStartTime.toString().split(":");
             if (availableTime[1] === "30") {
               availableTime[1] = "0.5";
             }
-            const availableStartTime =
-              parseFloat(availableTime[0]) + parseFloat(availableTime[1]);
-            const availableTotalHour =
-              serviceRequest[sr].ServiceHours + serviceRequest[sr].ExtraHours!;
-            const totalAcceptTime = acceptStartTime + acceptTotalHour + 1;
-            const totalAvailableTime = availableStartTime + availableTotalHour + 1;
+            const availableStartTime = parseFloat(availableTime[0]) + parseFloat(availableTime[1]);
+            
+            const availableTotalHour = Number(serviceRequest[sr].ServiceHours) + Number(serviceRequest[sr].ExtraHours!);
+            const totalAcceptTime = Number(acceptStartTime) + Number(acceptTotalHour) + 1;
+            const totalAvailableTime = Number(availableStartTime) + Number(availableTotalHour) + 1;
+            
+            console.log("availableStartTime"+availableStartTime);
+            console.log("totalAcceptTime"+totalAcceptTime);
             console.log("acceptStartTime"+acceptStartTime);
-            console.log("acceptTotalHour"+acceptTotalHour);
-            console.log("totalaccept"+totalAcceptTime);
-            console.log("accepttime"+acceptStartTime);
+            console.log("totalAvailableTime"+totalAvailableTime);;
             if (
-              availableStartTime >= totalAcceptTime ||
+              totalAcceptTime <=  availableStartTime ||
               acceptStartTime >= totalAvailableTime
             ) {
               matched = false;
@@ -89,6 +78,7 @@ export class Service {
               break;
             }
           } else {
+            
             matched = false;
           }
         }
@@ -96,7 +86,106 @@ export class Service {
       }
    
 
+      
+
       public async CancelService(ServiceId: number) {
         return this.Repository.CancelService(ServiceId);
+      }
+
+
+
+    public async filter_feature_SR(Service:any , filters: any){
+
+      let filter_Info;
+      if(filters.ServiceId){
+        filter_Info = Service.filter((x: { ServiceId: any; }) => {return x.ServiceId === filters.ServiceId
+        });
+      }
+
+     if(filters.Status){
+        if(filter_Info){filter_Info = filter_Info.filter((x: { Status: any; }) => {
+            return x.Status === filters.Status
+          });
+        }else{
+          filter_Info = Service.filter((x: { Status: any; }) => {return x.Status === filters.Status
+          });
+        }
+      }
+
+      if(filters.PostalCode){
+        if(filter_Info){
+          filter_Info = filter_Info.filter((x: { Zipcode: any; }) => 
+          { return Number(x.Zipcode) === Number(filters.PostalCode) });
+        }
+        else{
+          filter_Info = Service.filter((x: { Zipcode: any; }) =>
+           {return Number(x.Zipcode ) === Number(filters.PostalCode) });
+        }
+      }
+
+     if(filters.UserId){
+        if(filter_Info){
+          filter_Info = filter_Info.filter((x: { UserId: any; }) => {return x.UserId === filters.UserId
+          });
+        }else{
+          filter_Info = Service.filter((x: { UserId: any; }) => {return x.UserId === filters.UserId
+          });
+        }
+      }
+
+      if(filters.ServiceProviderId){
+        if(filter_Info){
+          filter_Info = filter_Info.filter((x: { ServiceProviderId: any; }) => {return x.ServiceProviderId === filters.ServiceProviderId
+          });
+        }else{
+          filter_Info = Service.filter((x: { ServiceProviderId: any; }) => {return x.ServiceProviderId === filters.ServiceProviderId
+          });
+        }
+      }
+
+      
+      if(filters.FromDate){
+        const fromDate = new Date(filters.FromDate);
+        if(filter_Info){
+          filter_Info = filter_Info.filter((x: { ServiceStartDate: string | number | Date; }) => {
+            return new Date(x.ServiceStartDate) >= fromDate
+          });
+        }else{
+          filter_Info = Service.filter((x: { ServiceStartDate: string | number | Date; }) =>
+           {return new Date(x.ServiceStartDate) >= fromDate
+          });
+        }
+      }
+
+      if(filters.ToDate){
+        const toDate = new Date(filters.ToDate);
+        if(filter_Info){
+          filter_Info = filter_Info.filter((x: { ServiceStartDate: string | number | Date; }) => {return new Date(x.ServiceStartDate) <= toDate
+          });
+        }else{
+          filter_Info = Service.filter((x: { ServiceStartDate: string | number | Date; }) => {return new Date(x.ServiceStartDate) <= toDate
+          });
+        }
+      }
+
+      if(filters.Email){
+        const us = await this.Repository.getUserByEmail(filters.Email);
+        if(us){
+          if(filter_Info){
+            filter_Info = filter_Info.filter((x: { UserRequest: { id: any; }; ServiceProviderId: any; }) => {
+              return x.UserRequest.id === us.id || x.ServiceProviderId === us.id
+            });
+          }else{
+            filter_Info = Service.filter((x: { UserRequest: { id: any; }; ServiceProviderId: any; }) => {
+               return x.UserRequest.id === us.id || x.ServiceProviderId === us.id
+            });
+          }
+        }else{
+          filter_Info = [];
+        }
+      } 
+      
+      return filter_Info;
+
     }
 }

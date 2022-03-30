@@ -40,9 +40,7 @@ export class Controller {
                          }
                         
                          }
-                          else{
-                    return res.status(404).json('No users')
-                    }          
+                            
                       }).catch((error: Error) => {
                                 return res.status(500).json({ error: error });
                                });  
