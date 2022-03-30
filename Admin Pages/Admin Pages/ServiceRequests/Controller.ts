@@ -165,7 +165,7 @@ export class Controller {
                         return res.status(500).json({ error: error });
                       }); 
 
-                      const { srId, matched } = await this.Service.helperHasFutureSameDateAndTime( req.body.ServiceStartDate, serviceList,  serviceDetails.TotalHours, serviceDetails.ServiceStartTime );
+                      const { srId, matched } = await this.Service.helperHasFutureSameDateAndTime( req.body.ServiceStartDate, serviceList,  serviceDetails.TotalHours, req.body.ServiceStartTime );
                                             if(matched) {
                                                 return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
                                             }

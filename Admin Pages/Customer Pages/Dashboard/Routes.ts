@@ -50,9 +50,10 @@ const { serviceupdate} = ServiceRequestSchema;
  *      description: Invalid mail, Try agian or creating an account first.
  */
  Dashboardrouter.get('/Dashboard', LoginController.validateToken, controller.getSR);
+ Dashboardrouter.get('/Dashboard/ServiceDetails/:ServiceId', LoginController.validateToken, controller.ServiceDetails);
  Dashboardrouter.post('/RescheduleService/:ServiceId', celebrate(serviceupdate) ,LoginController.validateToken, controller.RescheduleService);
  Dashboardrouter.post('/CancelService/:ServiceId', LoginController.validateToken, controller.CancelService);
- Dashboardrouter.get('/ServiceHistory', LoginController.validateToken, controller.ServiceHistory);
+ 
 
 
 

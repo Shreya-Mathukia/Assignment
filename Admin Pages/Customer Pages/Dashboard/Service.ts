@@ -13,11 +13,16 @@ export class DashboardService {
         return this.DashboardRepository.getSR();
     }
 
-    public async ServiceHistory(): Promise<ServiceRequest[] | null> {
-        return this.DashboardRepository.ServiceHistory();
+    public async ServiceDetails(ServiceId: number): Promise<ServiceRequest[] | null> {
+        return this.DashboardRepository.ServiceDetails(ServiceId);
     }
 
-    
+    public async getServiceDetailsById(ServiceId: number) {
+      return this.DashboardRepository.getServiceById(ServiceId);
+    }    
+    public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
+      return this.DashboardRepository.getAllRequestofSp(Id);
+      }
     public async RescheduleService(ServiceRequest: ServiceRequest, ServiceId: number) {
         return this.DashboardRepository.RescheduleService(ServiceRequest, ServiceId);
     }
@@ -27,84 +32,51 @@ export class DashboardService {
     }
   
     public helperHasFutureSameDateAndTime(
-        date: string,
-        serviceRequest: ServiceRequest[],
-        totalHour: number,
-        time: string ) 
-      {
-          let srDate;
-          let startTime;
-          let endTime;
-          const uTime = time.split(":");
-          if(uTime[1] === '30')
-          {
-            uTime[1] = '0.5';
+      date: Date,
+      serviceRequest: ServiceRequest[],
+      acceptTotalHour: number,
+      time: number
+    ) {
+      let srId;
+      let matched = false;
+      for (let sr in serviceRequest) {
+        if (date == serviceRequest[sr].ServiceStartDate) {
+          const acceptTime = time.toString().split(":");
+          if (acceptTime[1] === "30") {
+            acceptTime[1] = "0.5";
           }
-          const updatedTime = parseFloat(uTime[0]) + parseFloat(uTime[1]);
-          const enteredDate = new Date(date.split("-").reverse().join("-"));
-          let matched;
-          for (let count in serviceRequest) 
-          {
-            if (new Date(serviceRequest[count].ServiceStartDate) > enteredDate) 
-            {
-              matched = false;
-            } 
-            else if (
-              new Date(serviceRequest[count].ServiceStartDate) < enteredDate
-            ) 
-            {
-              matched = false;
-            } 
-            else 
-            {
-    
-              const sTime =serviceRequest[count].ServiceStartTime.toString().split(":");
-              if(sTime[1] === '30')
-              {
-                sTime[1] = '0.5';
-              }
-              const availStartTime = parseFloat(sTime[0]) + parseFloat(sTime[1]);
-              const availTotalHour =
-                serviceRequest[count].ServiceHours + serviceRequest[count].ExtraHours;
-              console.log(updatedTime);
-              console.log(totalHour)
-              console.log(availStartTime);
-              console.log(availTotalHour);
-              if (
-                updatedTime + totalHour < availStartTime ||
-                availStartTime + availTotalHour < updatedTime
-              ) 
-              {
-                matched = false;
-              }
-              else
-              {
-                srDate = serviceRequest[count].ServiceStartDate.toString().split("-").reverse().join("-");
-    
-                const srTime = availStartTime.toString().split('.');
-                if(srTime[1] === '5'){
-                  srTime[1] = '30'
-                }else{
-                  srTime[1] = '00'
-                }
-                startTime = srTime.join(':');
-    
-                const eTime = (availStartTime + availTotalHour).toString().split('.');
-                if(parseInt(eTime[1]) === 5)
-                {
-                  eTime[1] = '30';
-                }else
-                {
-                  eTime[1] = '00';
-                }
-                endTime = eTime.join(':');
-                matched = true;
-                break;
-              }
-              
-            }
+          const acceptStartTime = parseFloat(acceptTime[0]) + parseFloat(acceptTime[1]);
+  
+          const availableTime = serviceRequest[sr].ServiceStartTime.toString().split(":");
+          if (availableTime[1] === "30") {
+            availableTime[1] = "0.5";
           }
-          return {matched, srDate, startTime, endTime};
-      };
+          const availableStartTime = parseFloat(availableTime[0]) + parseFloat(availableTime[1]);
+          
+          const availableTotalHour = Number(serviceRequest[sr].ServiceHours) + Number(serviceRequest[sr].ExtraHours!);
+          const totalAcceptTime = Number(acceptStartTime) + Number(acceptTotalHour) + 1;
+          const totalAvailableTime = Number(availableStartTime) + Number(availableTotalHour) + 1;
+          
+          console.log("availableStartTime"+availableStartTime);
+          console.log("totalAcceptTime"+totalAcceptTime);
+          console.log("acceptStartTime"+acceptStartTime);
+          console.log("totalAvailableTime"+totalAvailableTime);;
+          if (
+            totalAcceptTime <=  availableStartTime ||
+            acceptStartTime >= totalAvailableTime
+          ) {
+            matched = false;
+          } else {
+            srId = serviceRequest[sr].ServiceId;
+            matched = true;
+            break;
+          }
+        } else {
+          
+          matched = false;
+        }
+      }
+      return {matched, srId};
+    }
     
 }

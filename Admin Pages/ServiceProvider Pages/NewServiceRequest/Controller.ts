@@ -3,6 +3,7 @@ import { ServiceRequest } from "../../models/servicerequest";
 import { Service } from "./Service";
 import jwt from "jsonwebtoken";
 import exceljs from 'exceljs';
+import { any } from "joi";
 require('dotenv').config();
 
 export class Controller {
@@ -13,89 +14,81 @@ export class Controller {
     
     public getNewServiceRequest = async(req: Request, res: Response): Promise<Response | void> => {
         const token = req.headers.authorization;
-        let spId: any;
-        let flag:number=0;
-        let uId:any;
-        let srId:any;
-        let serviceList: any =[];
-        let details:any = {};
-        let response:any = [];
-        let userZip:any, Spzip:any;
         if(token) {
             jwt.verify(token, process.env.SECRET_KEY!, async (error, user: any) => {
                 if(error) {
                     return res.status(400).json("Invalid Login!");
                 }
                 else {
-
-                await this.Service.findUser(user.Email).then((user: any) => {
-                    if(user){
-                        spId= user.id;
-                        Spzip= user.Zipcode;
-                    }
+                let spId:any ;
+                await this.Service.findUser(user.Email).then((user)=>{
+                    if(user){spId=user.id;}
                 }).catch((error: Error) => {
-                    return res.status(500).json({ error: error });
-                  });
-                
-                  
-                await this.Service.getAllRequest().then((service)=>{
-                    if(service){
-                        serviceList = service;
-                        console.log(service);
-                    }
-                    else{
-                        flag=2;
-                    }
-                }).catch((error: Error) => {
-                    return res.status(500).json({ error: error });
-                  });  
-
-
-                for(let a in serviceList){
-                    await this.Service.getServiceDetailsById(serviceList[a].ServiceId).then((service) =>{
-                        if(service){
-                          uId= service?.UserId;
-                          srId = service?.ServiceRequestId; 
-                         details.ServiceDetails = service;
-                        }                 
-                      }).catch((error: Error) => {
-                          return res.status(500).json({ error: error });
+                            return res.status(500).json({ error: error });
                         });
-                        
-                  await this.Service.getUserDetails(uId).then((user) =>{
-                       if(user){
-                           details.UserDetails = user;
-                           userZip = user.Zipcode;
-                        }
-                         
-                        
-                      }).catch((error: Error) => {
-                              return res.status(500).json({ error: error });
-                            });    
-           
-                  await this.Service.getServiceAddress(srId).then((address) =>{
-                        if(address)
-                              {details.AddressDetails = address;}
-                         
-                          }).catch((error: Error) => {
-                                  return res.status(500).json({ error: error });
-                                });   
+                let ans: any = [];           
+                let BlockList:any = [];
+                await this.Service.blockCustomerCheck(spId).then((user)=>{
+                    if(user){BlockList=user;}
+                }).catch((error: Error) => {
+                            return res.status(500).json({ error: error });
+                        });
+                
+
+                return this.Service.getAllRequest().then((service: any)=>{  
+                    let SRL:any = [];                  
+                        if(service){
+                            for(let a in service){
+                                for(let b in BlockList){
+                                    if(Number(service[a].UserId) != Number(BlockList[b].TargetUserId) ){
+                                        SRL.push(service[a]);
+                                    }
+                                }
+                            }
+                            for(let a in SRL){
+                                let q:any={};
+                                let user: any ={};
+                                let sr: any ={};
+                                let address: any = {};
                                 
-                 
-                    response.push(details); 
+                                sr.ServiceId=service[a].ServiceId;
+                                sr.ServiceStartDate=service[a].ServiceStartDate;
+                                sr.ServiceStartTime=service[a].ServiceStartTime;
+                                sr.Payment=service[a].TotalCost;
+                                sr.ServiceHours=service[a].ServiceHours;
+                                
+                                q.ServiceDetails = sr;
+   
+                                let {UserRequest,ServiceRequestAddress}=service[a];
+   
+                                user.Name =  UserRequest.FirstName+" "+UserRequest.LastName;
+                                q.UserDetails = user;
+   
+                                if(ServiceRequestAddress != null){
+                                   address.StreetName = ServiceRequestAddress.AddressLine1;
+                                   address.HouseNumber= ServiceRequestAddress.AddressLine2;
+                                   address.PostalCode= ServiceRequestAddress.PostalCode;
+                                   address.City = ServiceRequestAddress.City;
+                                   q.UserDetails.AddressofSr= address;
+                                }
+                                else{
+                                   q.UserDetails.AddressofSr= null;
+                                }
+                                                                                     
+                                  ans.push(q);
+                                  } 
+
+                                  return res.status(200).json(ans);
                              
-                               
-                                  
-                } 
-                           
-                              
-                              
-                if(flag != 2)  {
-                        return res.status(200).json(response);
-                }  
-                else{
-                    return res.status(404).json("No Service History");
-                }
+                           } 
+                           else{
+                            return res.status(404).json("NO SERVICE FOUND!")
+                        }                          
+
+                        }).catch((error: Error) => {
+                            return res.status(500).json({ error: error });
+                        });  
+
                 
                 }
             });
@@ -118,7 +111,7 @@ export class Controller {
                 }
                 else {
 
-                await this.Service.getServiceDetailsById1(+req.params.ServiceId).then((service) =>{
+                await this.Service.getServiceDetailsById(+req.params.ServiceId).then((service) =>{
                       if(service){
                         uId= service?.UserId;
                         srId = service?.ServiceRequestId; 
@@ -167,8 +160,11 @@ export class Controller {
         const token = req.headers.authorization;
         let serviceDetails:any;
         let spId:any;
-        let serviceList:any;
-        let userZip:any , SpZip:any;
+        let serviceList:any=[];
+        let SrZip:any , SpZip:any;
+        let worksWithPet:any,HasPets:any;
+        let userId:any;
+       
         if(token) {
             jwt.verify(token, process.env.SECRET_KEY!, async (error, user: any) => {
                 if(error) {
@@ -180,42 +176,73 @@ export class Controller {
                         if(user){
                             spId = user.id;
                             SpZip = user.Zipcode;
+                            worksWithPet=user.UserProfilePicture;
                         }
                        }).catch((error: Error) => {
                         return res.status(500).json({ error: error });
                       });
                     
-                    await this.Service.getServiceDetailsById1(+req.params.ServiceId).then((service)=>{
+                    await this.Service.getServiceDetailsById(+req.params.ServiceId).then((service)=>{
                         if(service){
                             serviceDetails=service;
+                            userId=service.UserId;
+                            SrZip = service.Zipcode;
+                            HasPets=service.HasPets;
                             serviceDetails.TotalHours=service.ExtraHours! + service.ServiceHours;
                         }
-
                     }).catch((error: Error) => {
                         return res.status(500).json({ error: error });
                       });
+                            
+                    let BlockCheck = false;  
+                        await this.Service.blockCustomerCheck(spId).then((user)=>{
+                            if(user){
+                                for(let a in user){
+                                    if(Number(user[a].TargetUserId) == Number(userId) ){
+                                        BlockCheck =true;
+                                    }
+
+                                }
+                            }
+                        }).catch((error: Error) => {
+                                    return res.status(500).json({ error: error });
+                                });
                         
                      await this.Service.getAllRequestofSp(spId).then((service)=>{
+                        let srId = +req.params.ServiceId ;
                         if(service){
-                            serviceList=service;
+                            for(let a in service){
+                                if(service[a].ServiceId != srId ){
+                                    serviceList.push(service[a]);
+                                }
+                            }
+                            
                         }
 
                     }).catch((error: Error) => {
                         return res.status(500).json({ error: error });
                       }); 
 
+                      
+
                       const { srId, matched } = await this.Service.helperHasFutureSameDateAndTime( serviceDetails.ServiceStartDate, serviceList,  serviceDetails.TotalHours, serviceDetails.ServiceStartTime );
                                             if(matched) {
                                                 return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
                                             }
                                             else{
-                                                return this.Service.acceptService(spId,+req.params.ServiceId).then((a)=>{
-                                                    if(a){
-                                                        return res.status(200).json("Service Request Accepted");
-                                                    }
-                                                }).catch((error: Error) => {
-                                                    return res.status(500).json({ error: error });
-                                                  });
+                                                if(Number(SrZip) == Number(SpZip) && worksWithPet == HasPets && BlockCheck == false){
+                                                    return this.Service.acceptService(spId,+req.params.ServiceId).then((a)=>{
+                                                        if(a){
+                                                            return res.status(200).json("Service Request Accepted");
+                                                        }
+                                                    }).catch((error: Error) => {
+                                                        return res.status(500).json({ error: error });
+                                                      });
+
+                                                }else{
+                                                    return res.status(500).json("Cannot accept this Request ")
+                                                }
+                                                
                                             }
                 }
             });

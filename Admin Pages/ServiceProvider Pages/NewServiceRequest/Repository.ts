@@ -8,23 +8,23 @@ import { Op } from "sequelize";
 export class Repository {
     
     public async findUser(Email: string): Promise<User | null> {
-        return db.Users.findOne({where: { Email: Email}});
+        return db.Users.findOne({ where: { Email: Email}});
     }
 
-    public async getAllRequest(): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: {  Status: "1"} });
+    public async getAllRequest() {
+        return db.ServiceRequest.findAll({ include:['UserRequest','ServiceRequestAddress'] ,where: {  Status: "1"}});
     }
 
     public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
         return db.ServiceRequest.findAll({ where: { ServiceProviderId: Id } });
     }
-
-    
-    public async getServiceDetailsById(ServiceId: number) {
-        return db.ServiceRequest.findOne({ attributes:['UserId','ServiceRequestId','ServiceId','ServiceStartDate', 'ServiceStartTime'], where: { ServiceId: ServiceId } });
+    public async blockCustomerCheck(SpId: number){
+        return db.FavoriteAndBlocked.findAll({    attributes:['TargetUserId'] ,where:{ UserId: SpId,IsBlocked:true}})
     }
+    
+    
 
-    public async getServiceDetailsById1(ServiceId: number) {
+    public async getServiceDetailsById(ServiceId: number) {
         return db.ServiceRequest.findOne({ attributes:['UserId','ServiceRequestId','ServiceId','ServiceStartDate', 'ServiceStartTime','ServiceHourlyRate','ServiceHours','ExtraHours','Comments','HasPets','TotalCost','Discount'], where: { ServiceId: ServiceId } });
     }
 
@@ -33,8 +33,9 @@ export class Repository {
     }
 
     public async getUserDetails(id: number): Promise<User | null> {
-        return db.Users.findOne({ attributes:['FirstName','LastName','Zipcode'], where: { id: id}});
+        return db.Users.findOne({ attributes:['FirstName','LastName'], where: { id: id}});
     }
+    
 
     public async acceptService(Id: number, ServiceId: number) {
         return db.ServiceRequest.update({ Status: '2', ServiceProviderId: Id},{ where: { ServiceId: ServiceId , Status: {

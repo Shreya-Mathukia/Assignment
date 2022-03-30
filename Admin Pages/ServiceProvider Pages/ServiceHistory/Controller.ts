@@ -36,48 +36,53 @@ export class Controller {
                   });
                 
                   
-                await this.Service.getAllRequest(spId).then((service)=>{
+                await this.Service.getAllRequest(spId).then((service:any)=>{
                     if(service){
-                        serviceList = service;
-                    }
-                    else{
+                        for(let a in service){
+                            let q:any={};
+                            let user: any ={};
+                            let sr: any ={};
+                            let address: any = {};
+                            
+                            sr.ServiceId=service[a].ServiceId;
+                            sr.ServiceStartDate=service[a].ServiceStartDate;
+                            sr.ServiceStartTime=service[a].ServiceStartTime;
+                            sr.Payment=service[a].TotalCost;
+                            sr.ServiceHours=service[a].ServiceHours;
+                            
+                            q.ServiceDetails = sr;
+
+                            let {UserRequest,ServiceRequestAddress}=service[a];
+
+                            user.Name =  UserRequest.FirstName+" "+UserRequest.LastName;
+                            q.UserDetails = user;
+
+                            if(ServiceRequestAddress != null){
+                               address.StreetName = ServiceRequestAddress.AddressLine1;
+                               address.HouseNumber= ServiceRequestAddress.AddressLine2;
+                               address.PostalCode= ServiceRequestAddress.PostalCode;
+                               address.City = ServiceRequestAddress.City;
+                               q.UserDetails.AddressofSr= address;
+                            }
+                            else{
+                               q.UserDetails.AddressofSr= null;
+                            }
+                                                                                 
+                              response.push(q);
+                              } 
+
+                             
+                         
+                       } 
+                       else{
                         flag=2;
-                    }
+                    }             
                 }).catch((error: Error) => {
                     return res.status(500).json({ error: error });
                   });  
 
 
-                for(let a in serviceList){
-                    await this.Service.getServiceDetailsById(serviceList[a].ServiceId).then((service) =>{
-                        if(service){
-                          uId= service?.UserId;
-                          srId = service?.ServiceRequestId; 
-                         details.ServiceDetails = service;
-                        }                 
-                      }).catch((error: Error) => {
-                          return res.status(500).json({ error: error });
-                        });
-                        
-                  await this.Service.getUserDetails(uId).then((user) =>{
-                       if(user){details.UserDetails = user;}
-                         
-                        
-                      }).catch((error: Error) => {
-                              return res.status(500).json({ error: error });
-                            });    
-           
-                  await this.Service.getServiceAddress(srId).then((address) =>{
-                        if(address)
-                              {details.AddressDetails = address;}
-                         
-                          }).catch((error: Error) => {
-                                  return res.status(500).json({ error: error });
-                                });   
-
-                 response.push(details);               
-                                  
-                } 
+                
                            
                               
                               

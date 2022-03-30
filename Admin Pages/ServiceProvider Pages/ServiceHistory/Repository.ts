@@ -10,7 +10,7 @@ export class Repository {
     }
 
     public async getAllRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { ServiceProviderId: UserId , Status:'4'} });
+        return db.ServiceRequest.findAll({ include:['UserRequest','ServiceRequestAddress'],where: { ServiceProviderId: UserId , Status:'4'} });
     }
 
     
@@ -23,7 +23,7 @@ export class Repository {
     }
 
     public async getServiceAddress(ServiceRequestId: number): Promise<SRAddress | null> {
-        return db.SRAddress.findOne({ attributes:['AddressLine1 ','AddressLine2','City','PostalCode'], where: { ServiceRequestId: ServiceRequestId}});
+        return db.SRAddress.findOne({ attributes:['AddressLine1','AddressLine2','City','PostalCode'], where: { ServiceRequestId: ServiceRequestId}});
     }
 
     public async getUserDetails(id: number): Promise<User | null> {

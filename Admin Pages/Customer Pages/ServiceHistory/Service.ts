@@ -12,7 +12,7 @@ export class HistoryService {
         return this.historyRepository.findUser(Email);
     }
 
-    public async getAllPastRequest(UserId: number): Promise<ServiceRequest[]> {
+    public async getAllPastRequest(UserId: number) {
         return this.historyRepository.getAllPastRequest(UserId);
     }
 
