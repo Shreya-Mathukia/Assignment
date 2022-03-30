@@ -21,32 +21,57 @@ export class HistoryController {
                     return res.status(400).json("Invalid Login!");
                 }
                 else {
+                    let ans:any =[];
                     return this.historyService
                       .findUser(user.Email)
                       .then((user: any) => {
                             return this.historyService
                             .getAllPastRequest(user.id)
-                            .then(async (service) => {
-                                if(service) {
-                                    if(service.length > 0) {
-                                        for(let s in service) {
-                                            
-                                                serviceRequest.push(service[s]);
-                                            }
-                                        if(serviceRequest.length > 0) {
-                                            return res.status(200).json({ serviceRequest });
+                            .then((service: any) => {
+                                if(service){
+                                    for(let a in service){
+                                        
+                                        let q:any={};
+                                        let user: any ={};
+                                        let sr: any ={};
+                                        
+                                        
+                                        sr.ServiceId=service[a].ServiceId;
+                                        sr.ServiceStartDate=service[a].ServiceStartDate;
+                                        sr.ServiceStartTime=service[a].ServiceStartTime;
+                                        sr.Duration=service[a].ServiceHours;
+                                        sr.ExtraHours=service[a].ExtraHours;
+                                        sr.NetAmount=service[a].TotalCost;
+                                        sr.Comments=service[a].Comments;
+                                        q.ServiceDetails = sr;
+                      
+                                        let {HelperRequest}=service[a];
+                      
+                                        
+                                        user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
+                                        q.HelperDetails = user;
+                      
+                                        if(HelperRequest != null){
+                                            user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
+                                            q.HelperDetails = user;
+                          
                                         }
-                                        else {
-                                            return res.status(400).json("No service exists!");
+                                        else{
+                                           q.HelperDetails= null;
                                         }
-                                    }
-                                    else {
-                                        return res.status(400).json("No service exists!!");
-                                    }
-                                }
-                                else {
-                                    return res.status(400).json("No service exists!!!");
-                                }
+                                                                                             
+                                          ans.push(q);
+                                          
+                                                                       
+                                } 
+                                    
+                                     return res.status(200).json(ans);
+                                   }
+                                   else{
+                                       return res.status(404).json("NO SERVICE History!")
+                                   }
+                                                 
+                                  
                             })
                             .catch((error: Error) => {
                                 return res.status(500).json({ error: error });
@@ -66,7 +91,7 @@ export class HistoryController {
 
     public getServiceById = async(req: Request, res: Response): Promise<Response | void> => {
         const token = req.headers.authorization;
-
+        let ans: any = [];
         if(token) {
             jwt.verify(token, process.env.SECRET_KEY!, (error, user: any) => {
                 if(error) {
@@ -79,18 +104,53 @@ export class HistoryController {
 
                             return this.historyService
                             .getServiceById(+req.params.ServiceId)
-                            .then((service) => {
-                                if(service) {
-                                    if(user.id === service.UserId) {
-                                        return res.status(200).json(service);
-                                    }
+                            .then((service: any) => {
+                               
+                                    if(service){
+                                        for(let a in service){
+                                            
+                                            let q:any={};
+                                            let user: any ={};
+                                            let sr: any ={};
+                                            let address: any = {};
+                                            
+                                            sr.ServiceId=service[a].ServiceId;
+                                            sr.ServiceStartDate=service[a].ServiceStartDate;
+                                            sr.ServiceStartTime=service[a].ServiceStartTime;
+                                            sr.Duration=service[a].ServiceHours;
+                                            sr.ExtraHours=service[a].ExtraHours;
+                                            sr.NetAmount=service[a].TotalCost;
+                                            sr.Comments=service[a].Comments;
+                                            q.ServiceDetails = sr;
+                          
+                                            let {HelperRequest,ServiceRequestAddress}=service[a];
+                          
+                                            
+                                            user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
+                                            q.HelperDetails = user;
+                          
+                                            if(ServiceRequestAddress != null){
+                                               address.StreetName = ServiceRequestAddress.AddressLine1;
+                                               address.HouseNumber= ServiceRequestAddress.AddressLine2;
+                                               address.PostalCode= ServiceRequestAddress.PostalCode;
+                                               address.City = ServiceRequestAddress.City;
+                                               q.HelperDetails.AddressofSr= address;
+                                            }
+                                            else{
+                                               q.HelperDetails.AddressofSr= null;
+                                            }
+                                                                                                 
+                                              ans.push(q);
+                                              
+                                                                           
+                                    } 
+                                        
+                                         return res.status(200).json(ans);
+                                       }
                                     else {
                                         return res.status(404).json("No service request detail found with this service ID!");
                                     }
-                                }
-                                else {
-                                    return res.status(404).json("No service request detail found with this service ID!");
-                                }
+                                
                             })
                             .catch((error: Error) => {
                               return res.status(500).json({ error: error });
@@ -208,7 +268,7 @@ export class HistoryController {
                                 {header: 'ServiceStartDate', key: 'ServiceStartDate', width: 20},
                                 {header: 'ServiceStartTime', key: 'ServiceStartTime', width: 20},
                                 {header: 'ServiceProviderId', key: 'ServiceProviderId', width: 20},
-                                {header: 'TotalCost', key: 'TotalCost', width: 10},
+                                {header: 'NetAmmount', key: 'TotalCost', width: 10},
                                 {header: 'Status', key: 'Status', width: 10}
                               ];
                               let count = 1;

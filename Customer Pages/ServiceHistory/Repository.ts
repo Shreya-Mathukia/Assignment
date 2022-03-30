@@ -10,12 +10,13 @@ export class HistoryRepository {
         return db.Users.findOne({where: { Email: Email}});
     }
 
-    public async getAllPastRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { UserId: UserId } });
+    public async getAllPastRequest(UserId: number) {
+        return db.ServiceRequest.findAll({include:['HelperRequest'], where: { UserId: UserId , Status: { [Op.or]: [4, 3]
+          }} });
     }
 
     public async getServiceById(ServiceId: number) {
-        return db.ServiceRequest.findOne({ where: { ServiceId: ServiceId } });
+        return db.ServiceRequest.findOne({ include:['HelperRequest','ServiceRequestAddress'],where: { ServiceId: ServiceId } });
     }
 
     public async getServiceByRequestId(ServiceRequestId: number): Promise<ServiceRequest | null> {

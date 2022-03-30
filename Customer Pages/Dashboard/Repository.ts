@@ -5,7 +5,7 @@ import { User } from "../../models/user";
 export class DashboardRepository {
     
     public async getSR(): Promise<ServiceRequest[] | any> {
-        return db.ServiceRequest.findAll({ include:['HelperRequest'],where: {Status: '1'} });
+        return db.ServiceRequest.findAll({ include:['HelperRequest'],where: { Status: '1'} });
     }
     
     public async findSPById(UserId: number){
@@ -13,8 +13,7 @@ export class DashboardRepository {
     } 
 
     public async ServiceDetails(ServiceId: number): Promise<ServiceRequest[] | null> {
-        return db.ServiceRequest.findAll({ attributes: ['ServiceId' , 'ServiceStartDate' , 'ServiceStartTime' , 'ServiceHours' , 'ExtraHours', 'TotalCost', 'Status'],
-        include:['HelperRequest','ServiceRequestAddress'],where:{ ServiceId: ServiceId}});
+        return db.ServiceRequest.findAll({  include:['HelperRequest','ServiceRequestAddress'],where:{ ServiceId: ServiceId}});
     }
 
 
@@ -33,7 +32,7 @@ export class DashboardRepository {
     
 
     public async CancelService(ServiceId: number) {
-            return db.ServiceRequest.update({Status: '3',ModifiedBy:'3'}, { where: {ServiceId: ServiceId}});
+            return db.ServiceRequest.update({Status: '3',ModifiedBy:'3', ServiceProviderId: null}, { where: {ServiceId: ServiceId}});
     }
     
 
