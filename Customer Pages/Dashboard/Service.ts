@@ -1,48 +1,36 @@
-import { db } from "../../models/index";
 import { ServiceRequest } from "../../models/servicerequest";
-import { User } from "../../models/user";
-import { SRAddress } from "../../models/servicerequestaddress";
-import { Repository } from "./Repository";
+import { DashboardRepository } from "./Repository"
 
-export class Service {
-    public constructor(private readonly Repository: Repository) {
-        this.Repository = Repository;
-    }
-    
-    public async findUser(Email: string): Promise<User | null> {
-        return this.Repository.findUser(Email);
+
+
+
+export class DashboardService {
+    public constructor(private readonly DashboardRepository: DashboardRepository) {
+        this.DashboardRepository = DashboardRepository;
     }
 
-    public async getAllRequest(): Promise<ServiceRequest[]> {
-        return this.Repository.getAllRequest();
+    public async getSR(): Promise<ServiceRequest[] | null> {
+        return this.DashboardRepository.getSR();
     }
-    public async blockCustomerCheck(SpId: number){
-      return this.Repository.blockCustomerCheck(SpId);
-   }
 
-
-
-
-    public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
-        return this.Repository.getAllRequestofSp(Id);
-    }    
+    public async ServiceDetails(ServiceId: number): Promise<ServiceRequest[] | null> {
+        return this.DashboardRepository.ServiceDetails(ServiceId);
+    }
 
     public async getServiceDetailsById(ServiceId: number) {
-        return this.Repository.getServiceDetailsById(ServiceId);
+      return this.DashboardRepository.getServiceById(ServiceId);
     }    
-
-    public async getServiceAddress(ServiceRequestId: number): Promise<SRAddress | null> {
-        return this.Repository.getServiceAddress(ServiceRequestId);
+    public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
+      return this.DashboardRepository.getAllRequestofSp(Id);
+      }
+    public async RescheduleService(ServiceRequest: ServiceRequest, ServiceId: number) {
+        return this.DashboardRepository.RescheduleService(ServiceRequest, ServiceId);
     }
 
-    public async getUserDetails(id: number): Promise<User | null> {
-        return this.Repository.getUserDetails(id);
+    public async CancelService(ServiceId: number) {
+        return this.DashboardRepository.CancelService(ServiceId);
     }
-
-    public async acceptService(Id: number, ServiceId: number) {
-        return this.Repository.acceptService(Id,ServiceId);
-    }
-
+  
     public helperHasFutureSameDateAndTime(
       date: Date,
       serviceRequest: ServiceRequest[],
@@ -90,4 +78,5 @@ export class Service {
       }
       return {matched, srId};
     }
+    
 }

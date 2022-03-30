@@ -18,7 +18,9 @@ export class Repository {
     public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
         return db.ServiceRequest.findAll({ where: { ServiceProviderId: Id } });
     }
-
+    public async blockCustomerCheck(SpId: number){
+        return db.FavoriteAndBlocked.findAll({    attributes:['TargetUserId'] ,where:{ UserId: SpId,IsBlocked:true}})
+    }
     
     
 

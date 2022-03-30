@@ -20,12 +20,32 @@ export class Controller {
                     return res.status(400).json("Invalid Login!");
                 }
                 else {
-                
+                let spId:any ;
+                await this.Service.findUser(user.Email).then((user)=>{
+                    if(user){spId=user.id;}
+                }).catch((error: Error) => {
+                            return res.status(500).json({ error: error });
+                        });
                 let ans: any = [];           
-                  
-                return this.Service.getAllRequest().then((service: any)=>{                    
+                let BlockList:any = [];
+                await this.Service.blockCustomerCheck(spId).then((user)=>{
+                    if(user){BlockList=user;}
+                }).catch((error: Error) => {
+                            return res.status(500).json({ error: error });
+                        });
+                
+
+                return this.Service.getAllRequest().then((service: any)=>{  
+                    let SRL:any = [];                  
                         if(service){
                             for(let a in service){
+                                for(let b in BlockList){
+                                    if(Number(service[a].UserId) != Number(BlockList[b].TargetUserId) ){
+                                        SRL.push(service[a]);
+                                    }
+                                }
+                            }
+                            for(let a in SRL){
                                 let q:any={};
                                 let user: any ={};
                                 let sr: any ={};
@@ -142,6 +162,8 @@ export class Controller {
         let spId:any;
         let serviceList:any=[];
         let SrZip:any , SpZip:any;
+        let worksWithPet:any,HasPets:any;
+        let userId:any;
        
         if(token) {
             jwt.verify(token, process.env.SECRET_KEY!, async (error, user: any) => {
@@ -154,6 +176,7 @@ export class Controller {
                         if(user){
                             spId = user.id;
                             SpZip = user.Zipcode;
+                            worksWithPet=user.UserProfilePicture;
                         }
                        }).catch((error: Error) => {
                         return res.status(500).json({ error: error });
@@ -162,13 +185,28 @@ export class Controller {
                     await this.Service.getServiceDetailsById(+req.params.ServiceId).then((service)=>{
                         if(service){
                             serviceDetails=service;
+                            userId=service.UserId;
                             SrZip = service.Zipcode;
+                            HasPets=service.HasPets;
                             serviceDetails.TotalHours=service.ExtraHours! + service.ServiceHours;
                         }
-
                     }).catch((error: Error) => {
                         return res.status(500).json({ error: error });
                       });
+                            
+                    let BlockCheck = false;  
+                        await this.Service.blockCustomerCheck(spId).then((user)=>{
+                            if(user){
+                                for(let a in user){
+                                    if(Number(user[a].TargetUserId) == Number(userId) ){
+                                        BlockCheck =true;
+                                    }
+
+                                }
+                            }
+                        }).catch((error: Error) => {
+                                    return res.status(500).json({ error: error });
+                                });
                         
                      await this.Service.getAllRequestofSp(spId).then((service)=>{
                         let srId = +req.params.ServiceId ;
@@ -185,12 +223,14 @@ export class Controller {
                         return res.status(500).json({ error: error });
                       }); 
 
+                      
+
                       const { srId, matched } = await this.Service.helperHasFutureSameDateAndTime( serviceDetails.ServiceStartDate, serviceList,  serviceDetails.TotalHours, serviceDetails.ServiceStartTime );
                                             if(matched) {
                                                 return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
                                             }
                                             else{
-                                                if(Number(SrZip) == Number(SpZip)){
+                                                if(Number(SrZip) == Number(SpZip) && worksWithPet == HasPets && BlockCheck == false){
                                                     return this.Service.acceptService(spId,+req.params.ServiceId).then((a)=>{
                                                         if(a){
                                                             return res.status(200).json("Service Request Accepted");
@@ -200,7 +240,7 @@ export class Controller {
                                                       });
 
                                                 }else{
-                                                    return res.status(500).json("Cannot accept this request due to different areas.")
+                                                    return res.status(500).json("Cannot accept this Request ")
                                                 }
                                                 
                                             }
