@@ -19,7 +19,7 @@ export class ServiceRequest extends Model{
     ServiceProviderId!: number;
     SPAcceptedDat!: Date;
     HasPets!: boolean;
-    Status!: boolean;
+    Status!: string;
     ModifiedBy!: number;
     RefundedAmount!: number;
     Distance!: number;
@@ -93,7 +93,7 @@ export const ServiceRequestModelAttributes:ModelAttributes = {
         type: DataTypes.BOOLEAN
       },
       Status: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.STRING
       },
       ModifiedBy: {
         type: DataTypes.INTEGER

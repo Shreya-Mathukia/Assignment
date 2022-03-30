@@ -184,6 +184,7 @@ db.ServiceRequest.hasOne(db.SRAddress, {
     name: "ServiceRequestId",
     allowNull: false,
   },
+  as:'ServiceRequestAddress',
   constraints: true,
   onDelete: "CASCADE",
 });
@@ -199,6 +200,7 @@ db.ServiceRequest.belongsTo(db.Users,{
     name: "UserId",
     allowNull: false,
   },
+  as:'UserRequest',
   constraints: true,
   onDelete: "CASCADE",
 });
@@ -207,6 +209,7 @@ db.Users.hasMany(db.ServiceRequest,{
     name: "UserId",
     allowNull: false,
   },
+  as:'UserRequest',
   constraints: true,
   onDelete: "CASCADE",
 });
@@ -215,6 +218,7 @@ db.ServiceRequest.belongsTo(db.Users,{
     name: "ServiceProviderId",
     allowNull: true,
   },
+  as:'HelperRequest',
   constraints: true,
   onDelete: "CASCADE",
 });
@@ -223,23 +227,67 @@ db.Users.hasMany(db.ServiceRequest,{
     name: "ServiceProviderId",
     allowNull: true,
   },
+  as:'HelperRequest',
   constraints: true,
   onDelete: "CASCADE",
 });
 
 
-db.rating.hasOne(db.ServiceRequest, {
+db.ServiceRequest.hasOne(db.rating, {
   foreignKey: {
     name: "ServiceRequestId",
     allowNull: false,
   },
+  as:'ServiceRequestRating',
   constraints: true,
   onDelete: "CASCADE",
 });
-db.ServiceRequest.belongsTo(db.rating, {foreignKey: {
+db.rating.belongsTo(db.ServiceRequest, {
+  foreignKey: {
   name: "ServiceRequestId",
   allowNull: false,
 },
+as:'RatingServiceRequest',
+constraints: true,
+onDelete: "CASCADE",});
+
+
+
+db.Users.hasMany(db.FavoriteAndBlocked,{
+  foreignKey: {
+    name: "UserId",
+    allowNull: false,
+  },
+  as:'FavoriteAndBlocked',
+  constraints: true,
+  onDelete: "CASCADE",
+});
+db.Users.hasMany(db.FavoriteAndBlocked,{
+  foreignKey: {
+    name: "TargetUserId",
+    allowNull: false,
+  },
+  as:'TargetUserId',
+  constraints: true,
+  onDelete: "CASCADE",
+});
+
+db.Users.hasMany(db.rating, {
+  foreignKey: {
+  name: "RatingFrom",
+  allowNull: false,
+},
+as:'RatingFrom',
+constraints: true,
+onDelete: "CASCADE",});  
+
+
+db.Users.hasMany(db.rating, {
+  foreignKey: {
+  name: "RatingTo",
+  allowNull: false,
+},
+as:'RatingTo',
 constraints: true,
 onDelete: "CASCADE",});
 

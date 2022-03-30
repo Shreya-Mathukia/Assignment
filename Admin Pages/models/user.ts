@@ -66,6 +66,7 @@ export const UsersModelAttributes: ModelAttributes = {
     type: DataTypes.STRING,
     allowNull: false
   },
+  
   Email: {
     type: DataTypes.STRING,
     unique: true,
