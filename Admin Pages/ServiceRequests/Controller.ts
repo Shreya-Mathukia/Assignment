@@ -211,6 +211,7 @@ export class Controller {
 
 
     public CancelService = async (req: Request, res: Response): Promise<Response> => {
+        // send mail
         return this.Service
           .CancelService(+req.params.ServiceId)
           .then((ServiceRequest) => {
