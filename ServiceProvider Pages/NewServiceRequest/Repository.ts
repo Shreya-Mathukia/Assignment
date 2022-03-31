@@ -25,7 +25,7 @@ export class Repository {
     
 
     public async getServiceDetailsById(ServiceId: number) {
-        return db.ServiceRequest.findOne({ attributes:['UserId','ServiceRequestId','ServiceId','ServiceStartDate', 'ServiceStartTime','ServiceHourlyRate','ServiceHours','ExtraHours','Comments','HasPets','TotalCost','Discount'], where: { ServiceId: ServiceId } });
+        return db.ServiceRequest.findOne({ attributes:['UserId','ServiceRequestId','ServiceId','ServiceStartDate', 'ServiceStartTime','ServiceHourlyRate','ServiceHours','ExtraHours','Comments','HasPets','TotalCost','Discount','Zipcode'], where: { ServiceId: ServiceId } });
     }
 
     public async getServiceAddress(ServiceRequestId: number): Promise<SRAddress | null> {

@@ -11,11 +11,11 @@ export class Repository {
     }
 
     public async getAllRequest(UserId: number): Promise<ServiceRequest[]> {
-        return db.ServiceRequest.findAll({ where: { ServiceProviderId: UserId } });
+        return db.ServiceRequest.findAll({ where: { ServiceProviderId: UserId, Status: '4' } });
     }
 
     public async getRatingsById(ServiceRequestId: number): Promise<rating | null> {
-        return db.rating.findOne({ attributes:['ServiceRequestId','Ratings','Comments'] ,where: { ServiceRequestId: ServiceRequestId } });
+        return db.rating.findOne({ where: { ServiceRequestId: ServiceRequestId } });
     }
    
    
