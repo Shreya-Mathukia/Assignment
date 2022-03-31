@@ -20,10 +20,7 @@ export class HistoryService {
         return this.historyRepository.getServiceById(ServiceId);
     }
 
-    public async getServiceByRequestId(ServiceRequestId: number): Promise<ServiceRequest | null> {
-        return this.historyRepository.getServiceByRequestId(ServiceRequestId);
-    }
-
+    
     public async giveRatings(Rating: {[key: number | string] : rating}): Promise<rating> {
         return this.historyRepository.giveRatings(Rating);
     }

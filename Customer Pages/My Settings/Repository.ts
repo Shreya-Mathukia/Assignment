@@ -21,7 +21,7 @@ export class MySettingsRepository {
     public async updateUserAddress(Id: number,useraddress: UserAddress ){
         const {AddressLine1, AddressLine2, City, State, PostalCode, Mobile, Email} = useraddress;
          db.UserAddress.update({ AddressLine1: AddressLine1, AddressLine2: AddressLine2, City: City, State: State, PostalCode: PostalCode, Mobile: Mobile, Email:Email }, { where: { AddressId: Id } });
-        return db.UserAddress.findOne({where: {Address: Id}});
+        return db.UserAddress.findOne({where: {AddressId: Id}});
         }
     
 
@@ -44,7 +44,7 @@ export class MySettingsRepository {
         return db.UserAddress.update({IsDeleted: true},{ where: { AddressId: Id } });
     }
 
-    public async changePassword(Email: string, Password: string): Promise<[number, User[]]> {
+    public async changePassword(Email: string, Password: string): Promise<[number]> {
         return db.Users.update({ Password: Password }, {where: { Email: Email }});
     }
 }

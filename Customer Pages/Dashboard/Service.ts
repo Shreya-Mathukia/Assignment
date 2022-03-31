@@ -17,7 +17,7 @@ export class DashboardService {
         return this.DashboardRepository.ServiceDetails(ServiceId);
     }
 
-    public async getServiceDetailsById(ServiceId: number) {
+    public async getServiceById(ServiceId: number) {
       return this.DashboardRepository.getServiceById(ServiceId);
     }    
     public async getAllRequestofSp(Id: number): Promise<ServiceRequest[]> {
@@ -38,9 +38,18 @@ export class DashboardService {
       time: number
     ) {
       let srId;
-      let matched = false;
+      let matched = false; 
+      console.log(serviceRequest);    
       for (let sr in serviceRequest) {
-        if (date == serviceRequest[sr].ServiceStartDate) {
+       let date1 = new Date(date);
+       let date2=  new Date(serviceRequest[sr].ServiceStartDate);
+       console.log(date1,date2);
+       if ( date1 > date2 || date1< date2) {
+          
+        matched = false;
+      }
+        else {
+          console.log("h1...........");
           const acceptTime = time.toString().split(":");
           if (acceptTime[1] === "30") {
             acceptTime[1] = "0.5";
@@ -65,16 +74,15 @@ export class DashboardService {
             totalAcceptTime <=  availableStartTime ||
             acceptStartTime >= totalAvailableTime
           ) {
+            console.log("h2......................");
             matched = false;
           } else {
+            console.log("h3................");
             srId = serviceRequest[sr].ServiceId;
             matched = true;
             break;
           }
-        } else {
-          
-          matched = false;
-        }
+        } 
       }
       return {matched, srId};
     }
