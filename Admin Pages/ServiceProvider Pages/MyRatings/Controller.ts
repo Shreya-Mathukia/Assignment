@@ -28,6 +28,7 @@ export class Controller {
                         spId= user.id;
                     }
                 }).catch((error: Error) => {
+                    console.log("c1"+error);
                     return res.status(500).json({ error: error });
                   });
                 
@@ -40,27 +41,33 @@ export class Controller {
                         flag=2;
                     }
                 }).catch((error: Error) => {
+                    console.log("c2"+error);
                     return res.status(500).json({ error: error });
                   });  
 
 
                 for(let a in serviceList){
+                    details.serviceId= serviceList[a].ServiceId;
                    details.serviceDate = serviceList[a].ServiceStartDate;
                    details.serviceStartTime = serviceList[a].ServiceStartTime;
                     await this.Service.getRatingsById(serviceList[a].ServiceRequestId).then((rating)=>{
                         if(rating){
                             uId = rating.RatingFrom;
-                            details.ratings = rating;
+                            details.ratings = rating.Ratings;
                         }
                     }).catch((error: Error) => {
+                        console.log("c3"+error);
                         return res.status(500).json({ error: error });
                       });
                         
                   await this.Service.getUserDetails(uId).then((user) =>{
-                       if(user){details.UserDetails = user;}
+                       if(user){
+                           details.User = user.FirstName+ " "+user.LastName;
+                        }
                          
                         
                       }).catch((error: Error) => {
+                        console.log("c4"+error);
                               return res.status(500).json({ error: error });
                             });    
            

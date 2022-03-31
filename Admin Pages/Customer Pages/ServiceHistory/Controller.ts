@@ -37,6 +37,11 @@ export class HistoryController {
                                         
                                         
                                         sr.ServiceId=service[a].ServiceId;
+                                        if(Number(service[a].Status)== 3){
+                                            sr.Status = 'Canceled';
+                                        }else{
+                                            sr.Status = 'Completed';
+                                        }                                        
                                         sr.ServiceStartDate=service[a].ServiceStartDate;
                                         sr.ServiceStartTime=service[a].ServiceStartTime;
                                         sr.Duration=service[a].ServiceHours;
@@ -45,12 +50,7 @@ export class HistoryController {
                                         sr.Comments=service[a].Comments;
                                         q.ServiceDetails = sr;
                       
-                                        let {HelperRequest}=service[a];
-                      
-                                        
-                                        user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
-                                        q.HelperDetails = user;
-                      
+                                        let {HelperRequest}=service[a];                      
                                         if(HelperRequest != null){
                                             user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
                                             q.HelperDetails = user;
@@ -74,11 +74,13 @@ export class HistoryController {
                                   
                             })
                             .catch((error: Error) => {
+                                console.log(error);
                                 return res.status(500).json({ error: error });
                             });
                         
                       })
                       .catch((error: Error) => {
+                        console.log(error);
                         return res.status(500).json({ error: error });
                       });
                 }
@@ -98,52 +100,61 @@ export class HistoryController {
                     return res.status(400).json("Invalid Login!");
                 }
                 else {
-                    return this.historyService
-                      .findUser(user.Email)
-                      .then((user:any) => {
+                    
 
                             return this.historyService
                             .getServiceById(+req.params.ServiceId)
                             .then((service: any) => {
                                
                                     if(service){
-                                        for(let a in service){
                                             
                                             let q:any={};
                                             let user: any ={};
                                             let sr: any ={};
                                             let address: any = {};
                                             
-                                            sr.ServiceId=service[a].ServiceId;
-                                            sr.ServiceStartDate=service[a].ServiceStartDate;
-                                            sr.ServiceStartTime=service[a].ServiceStartTime;
-                                            sr.Duration=service[a].ServiceHours;
-                                            sr.ExtraHours=service[a].ExtraHours;
-                                            sr.NetAmount=service[a].TotalCost;
-                                            sr.Comments=service[a].Comments;
+                                            sr.ServiceId = service.ServiceId;
+
+                                            if(Number(service.Status)== 3){
+                                                sr.Status = 'Canceled';
+                                            }else{
+                                                sr.Status = 'Completed';
+                                            }  
+                                            sr.ServiceStartDate=service.ServiceStartDate;
+                                            sr.ServiceStartTime=service.ServiceStartTime;
+                                            sr.Duration=service.ServiceHours;
+                                            sr.ExtraHours=service.ExtraHours;
+                                            sr.NetAmount=service.TotalCost;
+                                            sr.Comments=service.Comments;
                                             q.ServiceDetails = sr;
                           
-                                            let {HelperRequest,ServiceRequestAddress}=service[a];
+                                            let {HelperRequest,ServiceRequestAddress}=service;
                           
-                                            
-                                            user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
-                                            q.HelperDetails = user;
-                          
+                                                                  
+                                            if(HelperRequest != null){
+                                                user.Name = HelperRequest.FirstName + " "+ HelperRequest.LastName;
+                                                q.HelperDetails = user;
+                            
+                                            }
+                                            else{
+                                            q.HelperDetails= null;
+                                            }
+
                                             if(ServiceRequestAddress != null){
                                                address.StreetName = ServiceRequestAddress.AddressLine1;
                                                address.HouseNumber= ServiceRequestAddress.AddressLine2;
                                                address.PostalCode= ServiceRequestAddress.PostalCode;
                                                address.City = ServiceRequestAddress.City;
-                                               q.HelperDetails.AddressofSr= address;
+                                               q.AddressofSr= address;
                                             }
                                             else{
-                                               q.HelperDetails.AddressofSr= null;
+                                               q.AddressofSr= null;
                                             }
                                                                                                  
                                               ans.push(q);
                                               
                                                                            
-                                    } 
+                                    
                                         
                                          return res.status(200).json(ans);
                                        }
@@ -153,13 +164,11 @@ export class HistoryController {
                                 
                             })
                             .catch((error: Error) => {
+                                console.log(error);
                               return res.status(500).json({ error: error });
                             });
                           
-                      })
-                      .catch((error: Error) => {
-                        return res.status(500).json({ error: error });
-                      });
+
                 }
             });
         }
@@ -171,21 +180,19 @@ export class HistoryController {
     public giveRatings = async(req: Request, res: Response): Promise<Response | undefined> => {
         const token = req.headers.authorization;
         req.body.RatingDate = new Date();
-        this.historyService.getServiceById(+req.params.ServiceId).then( (service: any)=>{
-            req.body.ServiceRequestId = service.ServiceRequestId;
-        }).catch((error: Error) => {
-            return res.status(500).json({ error: error });
-        })
 
         if(token) {
-            jwt.verify(token, process.env.SECRET_KEY!, (error, user: any) => {
+            jwt.verify(token, process.env.SECRET_KEY!, async (error, user: any) => {
                 if(error) {
                     return res.status(400).json("Invalid Login!");
                 }
                 else {
-                    return this.historyService
-                      .findUser(user.Email)
-                      .then((user: any) => {                   
+                    await this.historyService.getServiceById(+req.params.ServiceId).then( (service: any)=>{
+                        req.body.ServiceRequestId = service.ServiceRequestId;
+                    }).catch((error: Error) => {
+                        return res.status(500).json({ error: error });
+                    })
+                             
                             return this.historyService
                               .getRatingsById(req.body.ServiceRequestId)
                               .then((rating) => {
@@ -193,7 +200,7 @@ export class HistoryController {
                                       return res.status(400).json("You already gave Ratings!");
                                   }
                                   else {
-                                      if(req.params.ServiceId) {
+                                      if(+req.params.ServiceId) {
                                           return this.historyService
                                             .getServiceById(+req.params.ServiceId)
                                             .then((service) => {
@@ -234,11 +241,7 @@ export class HistoryController {
                               .catch((error: Error) => {
                                 return res.status(500).json({ error: error });
                               });
-                          
-                      })
-                      .catch((error: Error) => {
-                        return res.status(500).json({ error: error });
-                      });
+                      
                 }
             });
         }
@@ -259,7 +262,16 @@ export class HistoryController {
                       .findUser(user.Email)
                       .then(async (user) => {
                           if(user) {
-                              const data = await this.historyService.getAllPastRequest(user.id);
+                              let data: ServiceRequest | any = await this.historyService.getAllPastRequest(user.id);
+                              for(let a in data){
+                                  if(Number(data[a].Status) == 3){
+                                      data[a].Status = "Canceled";
+                                  }
+                                  else{
+                                    data[a].Status = "Completed";
+                                  }                                 
+                                  
+                              }
                               const workbook = new exceljs.Workbook();
                               const worksheet = workbook.addWorksheet('Service History');
                               worksheet.columns = [
@@ -269,10 +281,10 @@ export class HistoryController {
                                 {header: 'ServiceStartTime', key: 'ServiceStartTime', width: 20},
                                 {header: 'ServiceProviderId', key: 'ServiceProviderId', width: 20},
                                 {header: 'NetAmmount', key: 'TotalCost', width: 10},
-                                {header: 'Status', key: 'Status', width: 10}
+                                {header: 'Status', key: 'Status', width: 10},
                               ];
                               let count = 1;
-                              data.forEach(d => {
+                              data.forEach((d: any) => {
                                 (d as any).Id = count;
                                 worksheet.addRow(d);
                                 count += 1;

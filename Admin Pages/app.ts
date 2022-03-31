@@ -19,6 +19,11 @@ import HelperBlockCustomerRouter from "./ServiceProvider Pages/BlockCustomer/Rou
 import HelperNewServiceRequestRouter from "./ServiceProvider Pages/NewServiceRequest/Routes";
 import AdminUMRouter from "./Admin Pages/UserManagement/Routes";
 import AdminSRRouter from "./Admin Pages/ServiceRequests/Routes";
+import FavProrouter from "./Customer Pages/MyFavoritePros/Routes";
+import Dashboardrouter from "./Customer Pages/Dashboard/Routes";
+import { MySettingsController } from "./Customer Pages/My Settings/Controller";
+import settingsRouter from "./Customer Pages/My Settings/Routes";
+import historyRouter from "./Customer Pages/ServiceHistory/Routes";
 
 dotenv.config();
 const app = express();
@@ -73,6 +78,9 @@ app.use('/',scheduleRouter);
 app.use('/',YourDetailRouter);
 app.use('/',SetupServiceRouter);
 app.use('/',userAddressRouter);
+app.use('/',Dashboardrouter);
+app.use('/',settingsRouter);
+app.use('/',historyRouter);
 app.use('/',ProfileRouter);
 app.use('/',UpcomingServiceRouter);
 app.use('/',HelperServiceHistoryRouter);
@@ -81,6 +89,7 @@ app.use('/',HelperBlockCustomerRouter);
 app.use('/',HelperNewServiceRequestRouter);
 app.use('/',AdminUMRouter);
 app.use('/',AdminSRRouter);
+app.use('/',FavProrouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server Started at ${process.env.PORT}`)

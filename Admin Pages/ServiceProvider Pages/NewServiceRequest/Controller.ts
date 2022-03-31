@@ -21,13 +21,14 @@ export class Controller {
                 }
                 else {
                 let spId:any ;
+                let ans: any = [];           
+                let BlockList:any = [];
                 await this.Service.findUser(user.Email).then((user)=>{
                     if(user){spId=user.id;}
                 }).catch((error: Error) => {
                             return res.status(500).json({ error: error });
                         });
-                let ans: any = [];           
-                let BlockList:any = [];
+                
                 await this.Service.blockCustomerCheck(spId).then((user)=>{
                     if(user){BlockList=user;}
                 }).catch((error: Error) => {
@@ -36,46 +37,51 @@ export class Controller {
                 
 
                 return this.Service.getAllRequest().then((service: any)=>{  
-                    let SRL:any = [];                  
-                        if(service){
+                      
+                                 
+                        if(service){                  
+                            
                             for(let a in service){
+                                let flag = 0;
                                 for(let b in BlockList){
-                                    if(Number(service[a].UserId) != Number(BlockList[b].TargetUserId) ){
-                                        SRL.push(service[a]);
+                                    if(Number(BlockList[b].TargetUserId == Number(service[a].UserId))){
+                                        flag = 1;
                                     }
                                 }
-                            }
-                            for(let a in SRL){
-                                let q:any={};
-                                let user: any ={};
-                                let sr: any ={};
-                                let address: any = {};
-                                
-                                sr.ServiceId=service[a].ServiceId;
-                                sr.ServiceStartDate=service[a].ServiceStartDate;
-                                sr.ServiceStartTime=service[a].ServiceStartTime;
-                                sr.Payment=service[a].TotalCost;
-                                sr.ServiceHours=service[a].ServiceHours;
-                                
-                                q.ServiceDetails = sr;
-   
-                                let {UserRequest,ServiceRequestAddress}=service[a];
-   
-                                user.Name =  UserRequest.FirstName+" "+UserRequest.LastName;
-                                q.UserDetails = user;
-   
-                                if(ServiceRequestAddress != null){
-                                   address.StreetName = ServiceRequestAddress.AddressLine1;
-                                   address.HouseNumber= ServiceRequestAddress.AddressLine2;
-                                   address.PostalCode= ServiceRequestAddress.PostalCode;
-                                   address.City = ServiceRequestAddress.City;
-                                   q.UserDetails.AddressofSr= address;
+                                if(flag == 0){
+                                    let q:any={};
+                                    let user: any ={};
+                                    let sr: any ={};
+                                    let address: any = {};
+                                    
+                                    sr.ServiceId=service[a].ServiceId;
+                                    sr.ServiceStartDate=service[a].ServiceStartDate;
+                                    sr.ServiceStartTime=service[a].ServiceStartTime;
+                                    sr.Payment=service[a].TotalCost;
+                                    sr.ServiceHours=service[a].ServiceHours;
+                                    
+                                    q.ServiceDetails = sr;
+       
+                                    let {UserRequest,ServiceRequestAddress}=service[a];
+       
+                                    user.Name =  UserRequest.FirstName+" "+UserRequest.LastName;
+                                    q.UserDetails = user;
+       
+                                    if(ServiceRequestAddress != null){
+                                       address.StreetName = ServiceRequestAddress.AddressLine1;
+                                       address.HouseNumber= ServiceRequestAddress.AddressLine2;
+                                       address.PostalCode= ServiceRequestAddress.PostalCode;
+                                       address.City = ServiceRequestAddress.City;
+                                       q.UserDetails.AddressofSr= address;
+                                    }
+                                    else{
+                                       q.UserDetails.AddressofSr= null;
+                                    }
+                                                                                         
+                                      ans.push(q);
                                 }
-                                else{
-                                   q.UserDetails.AddressofSr= null;
-                                }
-                                                                                     
-                                  ans.push(q);
+
+                               
                                   } 
 
                                   return res.status(200).json(ans);
@@ -176,7 +182,7 @@ export class Controller {
                         if(user){
                             spId = user.id;
                             SpZip = user.Zipcode;
-                            worksWithPet=user.UserProfilePicture;
+                            worksWithPet=user.WorksWithPet;
                         }
                        }).catch((error: Error) => {
                         return res.status(500).json({ error: error });
@@ -230,17 +236,34 @@ export class Controller {
                                                 return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
                                             }
                                             else{
-                                                if(Number(SrZip) == Number(SpZip) && worksWithPet == HasPets && BlockCheck == false){
-                                                    return this.Service.acceptService(spId,+req.params.ServiceId).then((a)=>{
-                                                        if(a){
-                                                            return res.status(200).json("Service Request Accepted");
-                                                        }
-                                                    }).catch((error: Error) => {
-                                                        return res.status(500).json({ error: error });
-                                                      });
+                                                let petFlag=0;
+                                                if(worksWithPet == true ){
+                                                    petFlag=1;
+                                                }
+                                                else{
+                                                    if(HasPets == false)
+                                                        {petFlag=1;}
+                                                    else
+                                                        {petFlag=0;}
+                                                }
 
-                                                }else{
-                                                    return res.status(500).json("Cannot accept this Request ")
+                                                if(petFlag == 1){
+
+                                                    if(Number(SrZip) == Number(SpZip)  && BlockCheck == false){
+                                                        return this.Service.acceptService(spId,+req.params.ServiceId).then((a)=>{
+                                                            if(a){
+                                                                return res.status(200).json("Service Request Accepted");
+                                                            }
+                                                        }).catch((error: Error) => {
+                                                            return res.status(500).json({ error: error });
+                                                          });
+    
+                                                    }else{
+                                                        return res.status(500).json("Cannot accept this Request ")
+                                                    }
+                                                }
+                                                else{
+                                                    return res.json("You can't accept,Has Pets !!")
                                                 }
                                                 
                                             }

@@ -36,7 +36,7 @@ export class MySettingsService {
         return this.MysettingsRepository.deleteAddress(Id);
     }
 
-    public async changePassword(Email: string, Password: string): Promise<[number, User[]]> {
+    public async changePassword(Email: string, Password: string): Promise<[number]> {
         return this.MysettingsRepository.changePassword(Email, Password);
     }
 }

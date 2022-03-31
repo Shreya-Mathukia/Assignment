@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { DashboardService } from './Service';
 import jwt from "jsonwebtoken";
 import { ServiceRequest } from '../../models/servicerequest';
+import { NumericLiteral } from 'typescript';
+import { NullableType } from 'joi';
 require("dotenv").config();
 
 export class DashboardController { 
@@ -145,11 +147,13 @@ export class DashboardController {
 
   public RescheduleService = async(req: Request, res: Response): Promise<Response | void> => {
     const token = req.headers.authorization;
+    let checkPoint: number;
     let serviceDetails:any;
     let serviceList:any = [];
-    let notfound = 0;
+    let TotalHours : any;
     let StatusFlag:any;
     let f=0;
+    let a1:any,a2:any;
     if(token) {
         jwt.verify(token, process.env.SECRET_KEY!, async (error, user: any) => {
             if(error) {
@@ -157,79 +161,97 @@ export class DashboardController {
             }
             else {
 
-                await this.DashboardService.getServiceDetailsById(+req.params.ServiceId).then((service)=>{
+                await this.DashboardService.getServiceById(+req.params.ServiceId).then((service: ServiceRequest | null)=>{
+                  console.log("Check......"+service);
                     if(service){
-                        serviceDetails.TotalHours=service.ExtraHours! + service.ServiceHours;
+                        TotalHours=service.ExtraHours! + service.ServiceHours;
+                        StatusFlag= service.Status;
                         serviceDetails=service;
-                       StatusFlag= serviceDetails.Status;
-                        
                     }else{
-                        notfound =1;
+                      checkPoint =1;
                     }
-
-                }).catch((error: Error) => {
-                    return res.status(500).json({ error: error });
+                      }).catch((error: Error) => {
+                        console.log(error);
+                          return res.status(500).json({ error: error });
                   });
 
-                  if(Number(StatusFlag) == 1 ){                     
-                      
+
+                  if(Number(StatusFlag) == 1  )
+                  {                
                       await this.DashboardService.RescheduleService(req.body,+req.params.ServiceId).then((s)=>{
                         if(s){
-                           f=1;
+                          
+                          checkPoint=2;
                         }  
                         }).catch((error: Error) => {
+                          console.log(error);
                             return res.status(500).json({ error: error });
                         });
                     
                   }
-                  else if(Number(StatusFlag) == 2){
-                      //check sp available, send mail to  sp;
-
-                         
-                 await this.DashboardService.getAllRequestofSp(serviceDetails.ServiceProviderId).then((service)=>{
-                    let srId = +req.params.ServiceId ;
-                    if(service){
-                        for(let a in service){
-                            if(service[a].ServiceId != srId ){
-                                serviceList.push(service[a]);
-                            }
-                        }
-                        
-                    }
-
-                }).catch((error: Error) => {
-                    return res.status(500).json({ error: error });
-                  }); 
-
-                  const { srId, matched } = await this.DashboardService.helperHasFutureSameDateAndTime( req.body.ServiceStartDate, serviceList,  serviceDetails.TotalHours,  req.body.ServiceStartTime );
-                                        if(matched) {
-                                            return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
+                  else 
+                  {
+                    if(Number(StatusFlag) == 2){
+                      //check sp available, send mail     
+                      console.log(serviceDetails.ServiceProviderId);          
+                          await this.DashboardService.getAllRequestofSp(serviceDetails.ServiceProviderId).then((service)=>{
+                            
+                            let srId = +req.params.ServiceId ;
+                                        if(service)
+                                        {
+                                            for(let a in service)
+                                            {
+                                                if(service[a].ServiceId != srId )
+                                                { serviceList.push(service[a]); }
+                                              }  
+                                                           
                                         }
-                                        else{
-                                            
-                                            await this.DashboardService.RescheduleService(req.body , +req.params.ServiceId).then((s)=>{
-                                                if(s){
-                                                   f=1;
-                                                }  
+                            }).catch((error: Error) => {
+                                return res.status(500).json({ error: error });
+                              }); 
+                              
+                          const { srId, matched } = await this.DashboardService.helperHasFutureSameDateAndTime( req.body.ServiceStartDate, serviceList,  TotalHours,  req.body.ServiceStartTime );
+                            a1 = matched, a2 =srId;
+                            checkPoint=3;
+                            }     
+                           else{checkPoint=4;}              
+                  }
+
+                  
+                  if(checkPoint == 1)
+                  {
+                      return res.status(404).json("No request of given id")
+                  }
+                  
+                  else if(checkPoint == 2 )
+                  {
+                       return res.status(200).json('ServiceDetails Rescheduled ');
+                  } 
+
+                  else if( checkPoint == 3)
+                  {
+                    if(a1) 
+                            { 
+                              return res.status(200).json(`Another Service Request of ServiceId #${a2} has already been assigned which has time overlap with service request. You can't pick this one!`);
+                            }
+                          
+                          else{
+                              return this.DashboardService.RescheduleService(req.body , +req.params.ServiceId).then((s)=>{
+                                                if(s){ 
+                                                  return res.status(200).json('ServiceDetails Rescheduled and email sent to Helper');
+                                                  ;}  
                                                 }).catch((error: Error) => {
                                                     return res.status(500).json({ error: error });
                                                 });
-                                        }  
-                                        
+                               }  
                   }
 
-                  if(f == 1 ){
-                    return res.status(200).json('ServiceDetails Rescheduled and email sent to Helper');
-                } 
-                else{
-                        if(notfound == 1){
-                            return res.status(404).json("No request of given id")
-                        }
-                        else{
-                          return res.status(400).json('Could not update try again')
-                        }
-                    
-                }   
+                  else
+                  {
+                    return res.status(200).json('Cannot Reschedule this Service As it is Canceled or Completed');
+                  }
+
+                 
                   
                  
             }

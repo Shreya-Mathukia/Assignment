@@ -11,17 +11,15 @@ export class HistoryRepository {
     }
 
     public async getAllPastRequest(UserId: number) {
-        return db.ServiceRequest.findAll({include:['HelperRequest'], where: { UserId: UserId , Status: { [Op.or]: [4, 3]
+        return db.ServiceRequest.findAll({include:['HelperRequest'], where: { UserId: UserId , Status: { [Op.or]: ['4', '3']
           }} });
     }
 
     public async getServiceById(ServiceId: number) {
-        return db.ServiceRequest.findOne({ include:['HelperRequest','ServiceRequestAddress'],where: { ServiceId: ServiceId } });
+        return db.ServiceRequest.findOne({ include:['HelperRequest','ServiceRequestAddress'] , where: { ServiceId: ServiceId } });
     }
 
-    public async getServiceByRequestId(ServiceRequestId: number): Promise<ServiceRequest | null> {
-        return db.ServiceRequest.findOne({ where: { ServiceRequestId: ServiceRequestId}});
-    }
+    
 
     public async giveRatings(Rating: {[key: number | string] : rating}): Promise<rating> {
         return db.rating.create(Rating);
