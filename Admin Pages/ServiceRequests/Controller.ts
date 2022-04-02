@@ -210,7 +210,7 @@ export class Controller {
                           return res.status(404).json("No request of given id")
                       }
                       else{
-                          return res.status(200).json("Service Request Already Completed");
+                          return res.status(201).json("Service Request Already Completed");
                       }
                      
                 }

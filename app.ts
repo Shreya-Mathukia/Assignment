@@ -21,9 +21,9 @@ import AdminUMRouter from "./Admin Pages/UserManagement/Routes";
 import AdminSRRouter from "./Admin Pages/ServiceRequests/Routes";
 import FavProrouter from "./Customer Pages/MyFavoritePros/Routes";
 import Dashboardrouter from "./Customer Pages/Dashboard/Routes";
-import { MySettingsController } from "./Customer Pages/My Settings/Controller";
 import settingsRouter from "./Customer Pages/My Settings/Routes";
 import historyRouter from "./Customer Pages/ServiceHistory/Routes";
+import swaggerJSDoc from "swagger-jsdoc";
 
 dotenv.config();
 const app = express();
@@ -44,21 +44,22 @@ const swaggerOptions = {
         }
     },
     apis: [
-        "public/ContactUs/routes.js",
-        "public/Login/SignUpRoutes.js",
-        "public/Login/LoginRoutes.js",
-        "public/Forgot-Password/ForgotPassword.Router.js",
-        "public/BookService/SetupService/SetupService.routes.js",
-        "public/BookService/user-address/address.routes.js",
-        "public/BookService/create service/ScheduleService/schedule.routes.js",
-        "public/BookService/create service/YourDetails/AddAddress.Routes.js"
+        "ContactUs/routes.ts",
+        "Login/SignUpRoutes.ts",
+        "Login/LoginRoutes.ts",
+        "Forgot-Password/ForgotPassword.Router.ts",
+        "BookService/SetupService/SetupService.routes.ts",
+        "BookService/create service/ScheduleService/schedule.routes.ts",
+        "BookService/create service/YourDetails.AddAddress.Routes.ts",
+        "BookService/user-address/address.routes.ts",
+        "Admin Pages/ServiceRequests/Routes.ts",
+        "Admin Pages/UserManagement/Routes.ts"
 
           ]
 }
 
 
-const swaggerDocs = internalDoc(swaggerOptions);
-
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 

@@ -49,7 +49,7 @@ export class Controller {
                   return res.status(200).json(resList);
                 }
                 else{
-                    return res.json("ERROR!!!! NOT ADMIN ")
+                    return res.status(401).json("ERROR!!!! NOT ADMIN ")
                 }                       
                      
                    
@@ -94,7 +94,7 @@ export class Controller {
                         if(userdetails.IsActive){
                             return this.Service.DeactivateUser(+req.params.id).then((status)=>{
                                 if(status){
-                                  return res.json("User Account Deactivated");
+                                  return res.status(200).json("User Account Deactivated");
                                 }
                             }).catch((error: Error) => {
                               return res.status(500).json({ error: error });
@@ -103,7 +103,7 @@ export class Controller {
                         else{
                             return this.Service.activateUser(+req.params.id).then((status)=>{
                                 if(status){
-                                  return res.json("User Account Activated");
+                                  return res.status(200).json("User Account Activated");
                                 }
                             }).catch((error: Error) => {
                               return res.status(500).json({ error: error });
@@ -116,7 +116,7 @@ export class Controller {
                   
                 }
                 else{
-                    return res.json("ERROR!!!! NOT ADMIN ")
+                    return res.status(422).json("ERROR!!!! NOT ADMIN ")
                 }                       
                      
                    
@@ -160,7 +160,7 @@ export class Controller {
                     if(userdetails != null)  {
                         return this.Service.ApproveHelperAccount(+req.params.id).then((user)=>{
                             if(user){
-                              return res.status(500).json("Service Provider Account Approved");
+                              return res.status(200).json("Service Provider Account Approved");
                             }
                         }).catch((error: Error) => {
                           return res.status(500).json({ error: error });
@@ -172,7 +172,7 @@ export class Controller {
                   
                 }
                 else{
-                    return res.json("ERROR!!!! NOT ADMIN ")
+                    return res.status(422).json("ERROR!!!! NOT ADMIN ")
                 }                       
                      
                    

@@ -127,7 +127,11 @@ export class Service {
         }
       }
 
-     if(filters.UserId){
+     if(filters.UserName){
+       let Name = filters.UserName.split(" ");
+       let FirstName=Name[0], LastName=Name[1];
+       let User = await this.Repository.getUserByName(FirstName,LastName);
+        filters.UserId= User?.id;
         if(filter_Info){
           filter_Info = filter_Info.filter((x: { UserId: any; }) => {return x.UserId === filters.UserId
           });
@@ -137,7 +141,12 @@ export class Service {
         }
       }
 
-      if(filters.ServiceProviderId){
+      if(filters.ServiceProviderName){
+        let Name = filters.ServiceProviderName.split(" ");
+       let FirstName=Name[0], LastName=Name[1];
+       let ServiceProvider = await this.Repository.getUserByName(FirstName,LastName);
+       filters.ServiceProviderId= ServiceProvider?.id;
+       
         if(filter_Info){
           filter_Info = filter_Info.filter((x: { ServiceProviderId: any; }) => {return x.ServiceProviderId === filters.ServiceProviderId
           });

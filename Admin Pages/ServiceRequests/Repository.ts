@@ -51,6 +51,9 @@ export class Repository {
 
         public async getUser(id: number): Promise<User | null> {
             return db.Users.findOne({where: { id: id}});
+        } 
+        public async getUserByName(FirstName: string,LastName: string): Promise<User | null> {
+            return db.Users.findOne({where: { FirstName: FirstName,LastName:LastName}});
         }    
     
 }
