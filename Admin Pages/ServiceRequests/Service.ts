@@ -3,7 +3,7 @@ import { ServiceRequest } from "../../models/servicerequest";
 import { User } from "../../models/user";
 import { SRAddress } from "../../models/servicerequestaddress";
 import { Repository } from "./Repository";
-import { json } from "express";
+import nodemailer from "nodemailer";
 
 export class Service {
     public constructor(private readonly Repository: Repository) {
@@ -13,6 +13,10 @@ export class Service {
     public async IsAdmin(Email: string): Promise<User | null> {
         return this.Repository.IsAdmin(Email);
     }
+    public async getUser(id: number): Promise<User | null> {
+      return this.Repository.getUser(id);
+  }
+
     public async getUserByEmail(Email: string): Promise<User | null> {
       return this.Repository.getUserByEmail(Email);
   }
@@ -183,9 +187,108 @@ export class Service {
         }else{
           filter_Info = [];
         }
-      } 
+      }
+      
+      if(filters.HasIssues){
+        console.log(Service);
+        if(filter_Info){
+          filter_Info = filter_Info.filter((x: { HasIssues: any; }) => {
+            return x.HasIssues === filters.HasIssues
+          });
+        }else{
+          filter_Info = Service.filter((x: { HasIssues: any; }) => {
+            return x.HasIssues === filters.HasIssues
+          });
+        }
+        
+      }
       
       return filter_Info;
 
     }
+
+
+    public async SendSRMail(UserId: number,details: any,b: any){ 
+      let flag:any;
+      let User: any = await this.getUser(UserId);
+         
+         let  Email = User.Email;
+          let mailTransporter = nodemailer.createTransport({
+              service: 'gmail',
+              auth: {
+                  user: process.env.EMAIL_ID,
+                  pass: process.env.EMAIL_PASS
+              }
+          });
+            if(b.SRAddress){
+              let mailDetails = {
+                from: process.env.EMAIL_ID,
+                to: Email,
+                subject: details.Subject,
+                html:`<html>
+                <body>
+                <h1>${details.Header}</h1>
+                </br>
+                <h2>${details.Message}</h2>
+                </br>
+                <h3>Service Details</h3>
+                </br>
+                <p>ServiceId- ${b.ServiceId}</p>
+                </br>
+                <p>Service Date- ${b.ServiceStartDate}</p>
+                </br>
+                <p>Service Time- ${b.ServiceStartTime}</p>
+                </br>
+                <h3>New Address is</h3>
+                </br>
+                <p>Street: ${b.SRAddress.StreetName}</p>
+                </br>
+                <p>House Number: ${b.SRAddress.HouseName}</p>
+                </br>
+                <p>City: ${b.SRAddress.City}</p>
+                </br>
+                <p>Postal Code: ${b.SRAddress.PostalCode}</p>
+                </body></html>`
+            };
+              
+            mailTransporter.sendMail(mailDetails, function(err, data) {
+                if(err) {
+                  
+                 return flag = false;
+                }
+                else
+                return flag= true;
+            });
+            }else{
+              let mailDetails = {
+                from: process.env.EMAIL_ID,
+                to: Email,
+                subject: details.Subject,
+                html:`<html>
+                <body>
+                <h1>${details.Header}</h1>
+                </br>
+                <h2>${details.Message}</h2>
+                </br>
+                <h3>Service Details<h3>
+                </br>
+                <p>ServiceId- ${b.ServiceId}</p>
+                </br>
+                <p>Service Date- ${b.ServiceStartDate}</p>
+                </br>
+                <p>Service Time- ${b.ServiceStartTime}</p>
+                </body></html>`
+            };
+              
+            mailTransporter.sendMail(mailDetails, function(err, data) {
+                if(err) {
+                  
+                 return flag = false;
+                }
+                else
+                return flag= true;
+            });
+            }
+          
+        }
 }

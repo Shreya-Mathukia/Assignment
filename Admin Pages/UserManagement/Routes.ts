@@ -23,6 +23,7 @@ const controller: Controller = new Controller(service);
 AdminUMRouter.get('/adminRoutes-getUsers', LoginController.validateToken, controller.getAllUsers);
 AdminUMRouter.put('/adminRoutes-Activate-Deactivate-User/:id', LoginController.validateToken, controller.EditUserStatus);
 AdminUMRouter.put('/adminRoutes-Approve-HelperAccount/:id', LoginController.validateToken, controller.ApproveHelperAccount);
+AdminUMRouter.post('/refund-amount/:ServiceId',LoginController.validateToken,controller.refundAmount);
 
 
 

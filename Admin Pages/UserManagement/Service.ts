@@ -37,4 +37,14 @@ export class Service {
       public async ApproveHelperAccount(userId:number){
         return this.Repository.ApproveHelperAccount(userId);
       }
+
+      public async refundAmount(srId:number, refundedAmount:number){
+        const serviceRequest = await this.Repository.getServiceRequestDetailById(srId);
+        if(serviceRequest && serviceRequest.HasIssues === true){
+          return this.Repository.refundAmount(srId, refundedAmount);
+        }else{
+          return null;
+        }
+  
+      }
 }
