@@ -55,6 +55,13 @@ const controller: UserAddressController = new UserAddressController(service);
  *   post:
  *    summary: Create User Address
  *    description: Create User Address
+ *    parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *    tags: 
+ *      - Book Service Screens
  *    requestBody:
  *     content:
  *      application/json:
@@ -77,6 +84,13 @@ userAddressRouter.post('/CreateUserAddress', celebrate(addressAdd), LoginControl
  *  get:
  *   summary: get all address of logged in user.
  *   description: get all address of logged in user.
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   tags: 
+ *      - Book Service Screens
  *   responses:
  *    200:
  *     description: List of Addresses.

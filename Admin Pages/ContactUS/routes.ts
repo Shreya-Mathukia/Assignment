@@ -54,6 +54,8 @@ const controller: ContactusController = new ContactusController(service);
  *   post:
  *    summary: create ContactUs request.
  *    description: create request.
+ *    tags: 
+ *    - ContactUs Screens
  *    requestBody:
  *     content:
  *      application/json:
@@ -74,6 +76,8 @@ router.post('/ContactUs', celebrate(add), controller.createUsers);
  *  get:
  *   summary: get request by Id.
  *   description: get request by Id.
+ *   tags: 
+ *    - ContactUs Screens
  *   parameters:
  *    - in: path
  *      name: id
@@ -96,6 +100,8 @@ router.get('/ContactUs/:id',  controller.getById);
  *  get:
  *   summary: get all ContactUs Requets.
  *   description: get all ContactUs Requets.
+ *   tags: 
+ *    - ContactUs Screens
  *   responses:
  *    200:
  *     description: List of Request.

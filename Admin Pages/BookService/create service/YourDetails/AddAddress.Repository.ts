@@ -2,6 +2,7 @@ import { db } from "../../../models/index";
 import { SRAddress } from "../../../models/servicerequestaddress";
 import { ServiceRequest, ServiceRequestModelAttributes  } from "../../../models/servicerequest";
 import {User} from "../../../models/user";
+import { UUIDV1 } from "sequelize/types";
 
 export class ServiceAddressRepository {
     public async CreateServiceAddress(address: SRAddress): Promise<SRAddress> {
@@ -26,5 +27,8 @@ export class ServiceAddressRepository {
     }
  
     //check that sp has not blocked the user.
-   
+    public async blockCustomerCheck(SpId: number, Uid: number){
+        return db.FavoriteAndBlocked.findAll({    attributes:['IsBlocked'] ,where:{ UserId: SpId,TargetUserId: Uid}})
+    }
+    
 }    

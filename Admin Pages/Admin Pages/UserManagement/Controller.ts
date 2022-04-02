@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { ServiceRequest } from "../../models/servicerequest";
 import { Service } from "./Service";
 import jwt from "jsonwebtoken";
@@ -49,7 +49,7 @@ export class Controller {
                   return res.status(200).json(resList);
                 }
                 else{
-                    return res.json("ERROR!!!! NOT ADMIN ")
+                    return res.status(401).json("ERROR!!!! NOT ADMIN ")
                 }                       
                      
                    
@@ -94,7 +94,7 @@ export class Controller {
                         if(userdetails.IsActive){
                             return this.Service.DeactivateUser(+req.params.id).then((status)=>{
                                 if(status){
-                                  return res.json("User Account Deactivated");
+                                  return res.status(200).json("User Account Deactivated");
                                 }
                             }).catch((error: Error) => {
                               return res.status(500).json({ error: error });
@@ -103,7 +103,7 @@ export class Controller {
                         else{
                             return this.Service.activateUser(+req.params.id).then((status)=>{
                                 if(status){
-                                  return res.json("User Account Activated");
+                                  return res.status(200).json("User Account Activated");
                                 }
                             }).catch((error: Error) => {
                               return res.status(500).json({ error: error });
@@ -116,7 +116,7 @@ export class Controller {
                   
                 }
                 else{
-                    return res.json("ERROR!!!! NOT ADMIN ")
+                    return res.status(422).json("ERROR!!!! NOT ADMIN ")
                 }                       
                      
                    
@@ -160,7 +160,7 @@ export class Controller {
                     if(userdetails != null)  {
                         return this.Service.ApproveHelperAccount(+req.params.id).then((user)=>{
                             if(user){
-                              return res.status(500).json("Service Provider Account Approved");
+                              return res.status(200).json("Service Provider Account Approved");
                             }
                         }).catch((error: Error) => {
                           return res.status(500).json({ error: error });
@@ -172,7 +172,7 @@ export class Controller {
                   
                 }
                 else{
-                    return res.json("ERROR!!!! NOT ADMIN ")
+                    return res.status(422).json("ERROR!!!! NOT ADMIN ")
                 }                       
                      
                    
@@ -185,5 +185,42 @@ export class Controller {
         }
     };
 
+
+    public refundAmount: RequestHandler = async (req,res): Promise<Response> => 
+  {
+    let refundamount:number;
+    
+      if(req.body.Percentage){
+        refundamount = (parseFloat(req.body.PaidAmount) * parseFloat(req.body.Percentage))/100 ;
+        console.log(refundamount);
+    }else{
+        refundamount = req.body.RefundedAmount;
+      }
+      if(refundamount === null){
+        return res.status(401).json( {message: "refund amount can not be null"})
+      }else{
+        if(req.body.PaidAmount>refundamount){
+          return  this.Service.refundAmount(+req.params.ServiceId,refundamount)
+        .then(serviceRequest => {
+          if(serviceRequest){
+            if(serviceRequest != null ){
+              return res.status(422).json({ message: "service request refunded successfully"});
+            }else{
+              return res.status(422).json({ message: "amount not refunded"});
+            }
+          }else{
+            return res.status(404).json({ message: "service request not found or service request not completed or service request already refunded"});
+          }
+        })
+        .catch((error: Error) => {
+          console.log(error);
+          return res.status(500).json({ error: error });
+        });
+        }else{
+          return res.status(401).json({ message: "refund amount must be less than paid amount"});
+        }
+      }
+    
+  };
 
 }

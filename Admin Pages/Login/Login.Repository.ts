@@ -23,7 +23,9 @@ public async createCustomer(users: User): Promise<User> {
            Password: value,
            Mobile: Mobile ,
            RoleId: 3,
-           IsRegisteredUser: true
+           IsRegisteredUser: true,
+           IsActive: true,
+           Isapproved: true
           });
     });
 return users;
@@ -43,7 +45,9 @@ public async createServiceProvider(users: User): Promise<User> {
            Password: value,
            Mobile: Mobile ,
            RoleId: 2,
-           IsRegisteredUser: true
+           IsRegisteredUser: true,
+           IsActive: true,
+           Isapproved: false
           });
     });
 return users;

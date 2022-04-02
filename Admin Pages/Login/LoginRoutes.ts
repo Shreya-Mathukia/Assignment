@@ -34,6 +34,8 @@ const controller: loginController = new loginController(service);
  *   post:
  *    summary: login
  *    description: login
+ *    tags: 
+ *      - Login Screen
  *    requestBody:
  *     content:
  *      application/json:
@@ -46,8 +48,22 @@ const controller: loginController = new loginController(service);
  *      description: failure in login
  */
 
-Loginrouter.post('/Login',celebrate(login),controller.login);
+Loginrouter.get('/Login',celebrate(login),controller.login);
 
+/**
+ * @swagger
+ * /Logout:
+ *   delete:
+ *    summary: Logout
+ *    description: Logout
+ *    tags: 
+ *      - Logout Screens
+ *    responses:
+ *     200:
+ *      description:  Logout  successfully
+ *     500:
+ *      description: ERROR
+ */
 Loginrouter.delete('/Logout', controller.logout);
 
 export = Loginrouter;

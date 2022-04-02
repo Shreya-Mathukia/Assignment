@@ -15,7 +15,7 @@ export class Repository {
         return db.Users.findOne({where: { Email: Email}});
     }
     public async getAllRequest() {
-        return db.ServiceRequest.findAll({attributes:['ServiceId','UserId','Zipcode','ServiceProviderId','ServiceStartDate', 'ServiceStartTime','Subtotal','TotalCost','Discount','Status','PaymentDone'],
+        return db.ServiceRequest.findAll({attributes:['ServiceId','UserId','Zipcode','ServiceProviderId','ServiceStartDate', 'ServiceStartTime','Subtotal','TotalCost','Discount','Status','PaymentDone','HasIssues'],
                 include:['UserRequest','ServiceRequestAddress'] });
     }
     
@@ -48,5 +48,12 @@ export class Repository {
     public async CancelService(ServiceId: number) {
             return db.ServiceRequest.update({Status: '3',ModifiedBy: '1'}, { where: {ServiceId: ServiceId}});
         }
+
+        public async getUser(id: number): Promise<User | null> {
+            return db.Users.findOne({where: { id: id}});
+        } 
+        public async getUserByName(FirstName: string,LastName: string): Promise<User | null> {
+            return db.Users.findOne({where: { FirstName: FirstName,LastName:LastName}});
+        }    
     
 }

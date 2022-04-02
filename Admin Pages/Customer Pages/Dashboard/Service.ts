@@ -49,7 +49,7 @@ export class DashboardService {
         matched = false;
       }
         else {
-          console.log("h1...........");
+         
           const acceptTime = time.toString().split(":");
           if (acceptTime[1] === "30") {
             acceptTime[1] = "0.5";
@@ -74,10 +74,10 @@ export class DashboardService {
             totalAcceptTime <=  availableStartTime ||
             acceptStartTime >= totalAvailableTime
           ) {
-            console.log("h2......................");
+            
             matched = false;
           } else {
-            console.log("h3................");
+            
             srId = serviceRequest[sr].ServiceId;
             matched = true;
             break;

@@ -49,6 +49,8 @@ const controller: loginController = new loginController(service);
  *   post:
  *    summary: creact customer
  *    description: create customer
+ *    tags: 
+ *      - SignUp Screens
  *    requestBody:
  *     content:
  *      application/json:
@@ -101,6 +103,8 @@ SignUprouter.post('/CreateAnAccount',celebrate(signupAdd), controller.createCust
  *   post:
  *    summary: creact service provider
  *    description: create service provider
+ *    tags: 
+ *      - SignUp Screens
  *    requestBody:
  *     content:
  *      application/json:

@@ -121,7 +121,11 @@ export class Controller {
                       });
 
                       if(ServiceStatusFlag == 1 || ServiceStatusFlag == 3){
-                          //update details without checking sp availbility , send cut email,
+                          let details={
+                              Subject:"Rescheduled Service",
+                              Header: "Reschedule Service by Admin ",
+                              Message:"Your Service Request Rescheduled by Admin "
+                          }
                           let f=0,d=0;
                           await this.Service.editDetailofSR(req.body.ServiceStartDate,req.body.ServiceStartTime,serviceDetails.ServiceId).then((s)=>{
                             if(s){
@@ -139,6 +143,8 @@ export class Controller {
                                 }); 
                              
                             if(f == 1 && d == 1){
+                                req.body.ServiceId= +req.params.ServiceId;
+                                await this.Service.SendSRMail(serviceDetails.UserId,details,req.body);
                                 return res.status(200).json('ServiceDetails Edited and email sent to customer');
                             } 
                             else{
@@ -147,8 +153,11 @@ export class Controller {
                         
                       }
                       else if(ServiceStatusFlag == 2){
-                          //check sp available, send mail to cust n sp;
-
+                        let details={
+                            Subject:"Rescheduled Service",
+                            Header: "Reschedule Service by Admin ",
+                            Message:"Your Service Request Rescheduled by Admin "
+                        }
                              
                      await this.Service.getAllRequestofSp(spId).then((service)=>{
                         let srId = +req.params.ServiceId ;
@@ -187,6 +196,9 @@ export class Controller {
                                                         }); 
                                                      
                                                     if(f == 1 || d == 1){
+                                                        req.body.ServiceId= +req.params.ServiceId;
+                                                        await this.Service.SendSRMail(serviceDetails.UserId,details,req.body);
+                                                       await this.Service.SendSRMail(serviceDetails.ServiceProviderId,details,req.body);
                                                         return res.status(200).json('ServiceDetails Edited and email sent to customer and SP');
                                                     } 
                                                     else{
@@ -198,7 +210,7 @@ export class Controller {
                           return res.status(404).json("No request of given id")
                       }
                       else{
-                          return res.status(200).json("Service Request Already Completed");
+                          return res.status(201).json("Service Request Already Completed");
                       }
                      
                 }
@@ -213,7 +225,18 @@ export class Controller {
     public CancelService = async (req: Request, res: Response): Promise<Response> => {
         return this.Service
           .CancelService(+req.params.ServiceId)
-          .then((ServiceRequest) => {
+          .then(async (ServiceRequest) => {
+            
+            let b: any =  await this.Service.getServiceDetailsById(+req.params.ServiceId);
+            let details ={
+                     Subject:"Your Service Request Cancelation",
+                     Header:"Request Canceled Successfully",
+                     Message: "SR has been Canceled by Admin as Per your request."
+            }
+            await this.Service.SendSRMail(b?.UserId,details,b);
+            if(Number(b.Status) == 2){
+                await this.Service.SendSRMail(b?.ServiceProviderId,details,b);   
+            }
               return res.status(200).json("Service Canceled!");
           })
           .catch((error: Error) => {

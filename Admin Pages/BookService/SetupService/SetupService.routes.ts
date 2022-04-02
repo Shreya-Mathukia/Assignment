@@ -38,6 +38,13 @@ const controller: ServiceController = new ServiceController(service);
  *   post:
  *    summary: SetupService
  *    description: SetupService
+ *    tags: 
+ *      - Book Service Screens
+ *    parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *    requestBody:
  *     content:
  *      application/json:

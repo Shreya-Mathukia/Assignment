@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { SRAddress } from "../../../models/servicerequestaddress";
 import { ServiceAddressService } from "./AddAdress.Service";
 import jwt from "jsonwebtoken";
+import { isBlock } from "typescript";
 require("dotenv").config();
 
 export class ServiceAddressController {
@@ -38,18 +39,38 @@ export class ServiceAddressController {
                                         console.log(success);
                                         return this.addressService
                                         .getSP()
-                                        .then((sp) => {                  
-                                            for(let email in sp) {
-                                              const serviceRequest = this.addressService.SendSRMail(sp[email].Email!).then((a: any)=>
+                                        .then(async (sp) => {    
+                                          let List:any = [];
+                                          for(let a in sp){
+                                             await this.addressService.blockCustomerCheck(sp[a].id,ServiceRequest.UserId).then((q:any)=>{
+                                               if(q){
+                                                if(q.IsBlocked != true ){
+                                                  List.push(sp);
+                                                 }
+                                               }else{
+                                                List.push(sp);
+                                               }
+                                               
+                                             }).catch((error: Error) => {
+                                              console.log(error);
+                                                return res.status(500).json({
+                                                  error: error
+                                                });
+                                              });
+                                            
+                                          }              
+                                            
+                                              return this.addressService.SendSRMail(List).then((a: any)=>
                                              {
                                                   return res.status(200).cookie("token",{httpOnly: true}).json("Book Service Succesfull , Notified Service Providers Near You");
                                             }).catch((error: Error) => {
+                                              console.log(error);
                                                 return res.status(500).json({
                                                   error: error
                                                 });
                                               });
                                               
-                                            }
+                                            
                                         }
                                         
                                         )

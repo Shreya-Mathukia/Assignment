@@ -20,36 +20,52 @@ export class ServiceAddressService {
     public async getSP(): Promise<User[]> {
         return this.ServiceAddressRepository.getSP();
     }
+    public async blockCustomerCheck(SpId: number,Uid: number){
+        return this.ServiceAddressRepository.blockCustomerCheck(SpId,Uid);
+    }
+    
 
 
-    public async SendSRMail(Email: string){        
-        let mailTransporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_ID,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-          
-        let mailDetails = {
-            from: process.env.EMAIL_ID,
-            to: Email,
-            subject: 'New Service Request',
-            html:`<html>
-            <body>
-            <h2>New Service Request Created!</h2>
-            <p>Logged in to your account to accept Service Request.</p>
-            </body></html>`
-        };
-          
-        mailTransporter.sendMail(mailDetails, function(err, data) {
-            if(err) {
+    public async SendSRMail(sp: User[]){ 
+        let flag:any;
+        for(let a in sp){
+           
+           let  Email = sp[a].Email;
+            let mailTransporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_ID,
+                    pass: process.env.EMAIL_PASS
+                }
+            });
               
-              return false;
-            }
-            else
-            return true;
-        });
+            let mailDetails = {
+                from: process.env.EMAIL_ID,
+                to: Email,
+                subject: 'New Service Request',
+                html:`<html>
+                <body>
+                <h2>New Service Request Created!</h2>
+                <p>Check out the New  Service Request.</p>
+                </body></html>`
+            };
+              
+            mailTransporter.sendMail(mailDetails, function(err, data) {
+                if(err) {
+                  
+                  flag = false;
+                }
+                else
+                flag= true;
+            });
+        }      
+        if(flag == false) {
+                  
+            return false;
+          }
+          else
+          return true; 
+        
         
         }
 

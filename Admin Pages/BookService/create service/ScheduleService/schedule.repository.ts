@@ -31,6 +31,7 @@ export class ScheduleRepository {
              Comments:Comments,
              HasPets:HasPets,
              Status: '1',
+             PaymentDone: false
         
             
         });

@@ -56,8 +56,10 @@ const controller: ServiceAddressController = new ServiceAddressController(servic
  * @swagger
  * /YourDetails:
  *   post:
- *    summary: Service Address
- *    description: Add Service Address
+ *    summary: Create SR Address
+ *    description: Create SR Address
+ *    tags: 
+ *      - Book Service Screens
  *    requestBody:
  *     content:
  *      application/json:
@@ -65,11 +67,13 @@ const controller: ServiceAddressController = new ServiceAddressController(servic
  *        $ref: '#/definitions/YourDetails'
  *    responses:
  *     200:
- *      description: Book Service Successful, Notified Service Provider Near you.
+ *      description: SR Address added.
  *     500:
  *      description: Error
  *     400:
  *      description: Authentication Error.
+ *     404:
+ *       description: Restart Book Service Procedure!
  */
 
 YourDetailRouter.post('/YourDetails', LoginController.validateToken, controller.CreateServiceAddress);
