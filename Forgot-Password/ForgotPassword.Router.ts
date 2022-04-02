@@ -30,6 +30,8 @@ const controller: ForgotPasswordController = new ForgotPasswordController(servic
  *   post:
  *    summary: ForgotPassword
  *    description: ForgotPassword
+ *    tags: 
+ *      - ForgotPassword Service 
  *    requestBody:
  *     content:
  *      application/json:
@@ -38,6 +40,11 @@ const controller: ForgotPasswordController = new ForgotPasswordController(servic
  *    responses:
  *     200:
  *      description: Check your mail
+ *      headers: 
+ *           Set-Cookie:
+ *               description: User Mail 
+ *               type: string   
+ *               example: UserEmail=shreyakm00@gmail.com; Path=/; HttpOnly
  *     500:
  *      description: Invalid mail, Try agian or creating an account first.
  */
@@ -66,6 +73,8 @@ ForgotPasswordrouter.post('/ForgotPassword',celebrate(forgot), controller.Forgot
  *   post:
  *    summary: ResetPassword
  *    description: ResetPassword
+ *    tags: 
+ *      - ForgotPassword Service 
  *    requestBody:
  *     content:
  *      application/json:

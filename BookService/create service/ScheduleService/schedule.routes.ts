@@ -60,6 +60,13 @@ const controller: ScheduleController = new ScheduleController(service);
  *   post:
  *    summary: ScheduleAndPlan
  *    description: ScheduleAndPlan
+ *    tags: 
+ *      - Book Service Screens
+ *    parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *    requestBody:
  *     content:
  *      application/json:

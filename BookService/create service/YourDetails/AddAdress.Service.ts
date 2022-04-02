@@ -46,7 +46,7 @@ export class ServiceAddressService {
                 html:`<html>
                 <body>
                 <h2>New Service Request Created!</h2>
-                <p>Logged in to your account to accept Service Request.</p>
+                <p>Check out the New  Service Request.</p>
                 </body></html>`
             };
               
