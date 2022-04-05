@@ -233,7 +233,7 @@ export class Controller {
 
                       const { srId, matched } = await this.Service.helperHasFutureSameDateAndTime( serviceDetails.ServiceStartDate, serviceList,  serviceDetails.TotalHours, serviceDetails.ServiceStartTime );
                                             if(matched) {
-                                                return res.status(200).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
+                                                return res.status(201).json(`Another Service Request of ServiceId #${srId} has already been assigned which has time overlap with service request. You can't pick this one!`);
                                             }
                                             else{
                                                 let petFlag=0;
@@ -259,11 +259,11 @@ export class Controller {
                                                           });
     
                                                     }else{
-                                                        return res.status(500).json("Cannot accept this Request ")
+                                                        return res.status(202).json("Cannot accept this Request ")
                                                     }
                                                 }
                                                 else{
-                                                    return res.json("You can't accept,Has Pets !!")
+                                                    return res.status(202).json("You can't accept,Has Pets !!")
                                                 }
                                                 
                                             }

@@ -22,7 +22,29 @@ const controller: Controller = new Controller(service);
 
 HelperMyRatingsRouter.get('/HelperMyRatings', LoginController.validateToken, controller.getratings);
 
-
+/**
+ * @swagger
+ * /HelperMyRatings:
+ *  get:
+ *   summary:  Ratings
+ *   description:  display ratings of service provider given by customer
+ *   tags: 
+ *    - Service Provider Screens 
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: ratings.
+ *    400:
+ *     description: invalid login credential or Unauthorised user or invalid or expired token.
+ *    404:
+ *     description: No Rating History.
+ *    500:
+ *     description: internal server error.
+ */
 
 
 export = HelperMyRatingsRouter;

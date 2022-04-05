@@ -34,15 +34,15 @@ export class Controller {
                                             return res.status(200).json({ serviceRequest });
                                         }
                                         else {
-                                            return res.status(400).json("No Upcoming Service !");
+                                            return res.status(401).json("No Upcoming Service !");
                                         }
                                     }
                                     else {
-                                        return res.status(400).json("No Upcoming Service !");
+                                        return res.status(401).json("No Upcoming Service !");
                                     }
                                 }
                                 else {
-                                    return res.status(400).json("No Upcoming Service !");
+                                    return res.status(401).json("No Upcoming Service !");
                                 }
                             })
                             .catch((error: Error) => {

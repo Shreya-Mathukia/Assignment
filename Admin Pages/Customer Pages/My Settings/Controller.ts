@@ -98,7 +98,7 @@ export class MySettingsController {
                                     });
                               }
                               else {
-                                  return res.status(404).json("No user found with this email!");
+                                  return res.status(401).json("No user found with this email!");
                               }
                           })
                           .catch((error: Error) => {
@@ -106,13 +106,13 @@ export class MySettingsController {
                         });
                     }
                     else {
-                        return res.status(404).json("No email found!");
+                        return res.status(401).json("No email found!");
                     }
                 }
             });
         }
         else {
-            return res.status(400).json("Error");
+            return res.status(500).json("Error");
         }
     };
 
@@ -153,7 +153,7 @@ export class MySettingsController {
             });
         }
         else {
-            return res.status(400).json("No token exists!");
+            return res.status(401).json("No token exists!");
         }
     };
 
@@ -225,7 +225,7 @@ export class MySettingsController {
                                   const isOld = bcrypt.compare(req.body.OldPassword, findUser.Password).then(async (domatch)=>{
                                     if(domatch){
                                         if(req.body.OldPassword === req.body.NewPassword) {
-                                            return res.status(400).json("New Password Can't be same as old Password!");
+                                            return res.status(401).json("New Password Can't be same as old Password!");
                                         } 
                                         else{
                                  req.body.NewPassword = await bcrypt.hash(req.body.NewPassword, saltRouds);
@@ -241,7 +241,7 @@ export class MySettingsController {
                                         } 
                                     }
                                     else {
-                                        return res.status(400).json("Incorrect Old Password!");
+                                        return res.status(404).json("Incorrect Old Password!");
                                       }
 
                                   }).catch((error: Error) => {

@@ -97,7 +97,7 @@ export class Controller {
               if(flag == 1){
                   
                 if(IsBlocked == true){
-                return res.status(200).json("Already in blocked list");
+                return res.status(201).json("Already in blocked list");
                 }
                 else {
                     return this.Service.UpdateBlockCustomer(spId,+req.params.TargetUserId).then((a)=>{
@@ -160,7 +160,7 @@ export class Controller {
               if(flag == 1){
                   
                 if(IsBlocked == false){
-                return res.status(200).json("Already  Unblocked");
+                return res.status(201).json("Already  Unblocked");
                 }
                 else {
                     return this.Service.UnblockCustomer(spId,+req.params.TargetUserId).then((a)=>{

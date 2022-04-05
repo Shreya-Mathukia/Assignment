@@ -118,7 +118,7 @@ export class ProfileController {
                             
                else {
                         return this.ProfileService.CreateUserAddress(req.body).then((address: UserAddress) => {
-                                    return res.status(200).json({
+                                    return res.status(201).json({
                                         Address: address.AddressLine1 + ', ' + address.AddressLine2 + ', ' + address.City + ', ' + address.PostalCode,
                                         Message: "Address Details Added!"
                                     });
@@ -171,7 +171,7 @@ export class ProfileController {
                                         } 
                                     }
                                     else {
-                                        return res.status(400).json("Incorrect Old Password!");
+                                        return res.status(401).json("Incorrect Old Password!");
                                       }
 
                                   }).catch((error: Error) => {

@@ -54,7 +54,7 @@ export class DashboardController {
              return res.status(200).json(ans);
       }
             else{
-              return res.json("No Service history.")
+              return res.status(404).json("No Service history.")
             }
              
         }
@@ -127,7 +127,7 @@ export class DashboardController {
                return res.status(200).json(ans);
              }
              else{
-                 return res.status(404).json("NO SUCHSERVICE Exist!")
+                 return res.status(404).json("NO SUCH SERVICE Exist!")
              }
                            
             
@@ -232,7 +232,7 @@ export class DashboardController {
                   {
                     if(a1) 
                             { 
-                              return res.status(200).json(`Another Service Request of ServiceId #${a2} has already been assigned which has time overlap with service request. You can't pick this one!`);
+                              return res.status(201).json(`Another Service Request of ServiceId #${a2} has already been assigned which has time overlap with service request. You can't pick this one!`);
                             }
                           
                           else{

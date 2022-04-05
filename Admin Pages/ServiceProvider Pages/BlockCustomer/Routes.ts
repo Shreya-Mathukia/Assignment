@@ -22,8 +22,110 @@ const controller: Controller = new Controller(service);
 
 HelperBlockCustomerRouter.get('/getAllCustomers', LoginController.validateToken, controller.getAllCustomers);
 HelperBlockCustomerRouter.post('/BlockCustomers/:TargetUserId', LoginController.validateToken, controller.BlockCustomers);
-HelperBlockCustomerRouter.put('/UnblockCustomers/:TargetUserId', LoginController.validateToken, controller.UnBlockCustomers);
+HelperBlockCustomerRouter.post('/UnblockCustomers/:TargetUserId', LoginController.validateToken, controller.UnBlockCustomers);
 
+
+/**
+ *@swagger
+ * definitions:
+ *  Blocked:
+ *   type: object
+ *   properties:
+ *    IsBlocked:
+ *     type: boolean
+ *     example: 'true'
+ */
+
+/**
+ * @swagger
+ * /getAllCustomers:
+ *  get:
+ *   summary: Display customers
+ *   description: list of customers worked with service provider in past
+ *   tags: 
+ *    - Service Provider Screens 
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: customers.
+ *    401:
+ *     description: invalid login credential or Unauthorised user or invalid or expired token
+ *    404:
+ *     description: Not worked with anyone yet.
+ *    500:
+ *     description: internal server error.
+ * 
+ */
+
+ /**
+ * @swagger
+ * /BlockCustomers/{TargetUserId}:
+ *  post:
+ *   summary: Block  customer
+ *   description: block  customer worked with service provider in past
+ *   tags: 
+ *    - Service Provider Screens 
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *    - in: path
+ *      name: TargetUserId
+ *      schema:
+ *       type: integer
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/definitions/Blocked'
+ *   responses:
+ *    200:
+ *     description: Added To Block List.
+ *    201:
+ *     description: customer alraedy in blocked list.
+ *    400:
+ *     description: invalid login credential or Unauthorised user or invalid or expired token.
+ *    500:
+ *     description: internal server error.
+ */
+
+ /**
+ * @swagger
+ * /UnblockCustomers/{TargetUserId}:
+ *  post:
+ *   summary: UnBlock  customer
+ *   description: Unblock  customer worked with service provider in past
+ *   tags: 
+ *    - Service Provider Screens 
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *    - in: path
+ *      name: TargetUserId
+ *      schema:
+ *       type: integer
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/definitions/Blocked'
+ *   responses:
+ *    200:
+ *     description: Added To Unblock List.
+ *    201:
+ *     description: customer alraedy in Unblock list.
+ *    400:
+ *     description: invalid login credential or Unauthorised user or invalid or expired token.
+ *    500:
+ *     description: internal server error.
+ */
 
 
 

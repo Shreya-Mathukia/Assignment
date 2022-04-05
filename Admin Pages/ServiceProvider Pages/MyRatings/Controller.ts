@@ -83,7 +83,7 @@ export class Controller {
                         return res.status(200).json(response);
                 }  
                 else{
-                    return res.status(404).json("No Service History");
+                    return res.status(404).json("No Rating History");
                 }
                 
                 }

@@ -197,7 +197,7 @@ export class HistoryController {
                               .getRatingsById(req.body.ServiceRequestId)
                               .then((rating) => {
                                   if(rating) {
-                                      return res.status(400).json("You already gave Ratings!");
+                                      return res.status(201).json("You already gave Ratings!");
                                   }
                                   else {
                                       if(+req.params.ServiceId) {
@@ -221,7 +221,7 @@ export class HistoryController {
                                                               });
                                                         }
                                                         else {
-                                                            return res.status(400).json("Service Request not completed or ServiceProvider Not found!");
+                                                            return res.status(401).json("Service Request not completed or ServiceProvider Not found!");
                                                         }
                                                     
                                                 }
@@ -234,7 +234,7 @@ export class HistoryController {
                                             });
                                       }
                                       else {
-                                          return res.status(400).json("Service Request  not exists!");
+                                          return res.status(404).json("Service Request  not exists!");
                                       }
                                   }
                               })
