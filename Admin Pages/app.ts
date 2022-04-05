@@ -9,7 +9,6 @@ import SetupServiceRouter from "./BookService/SetupService/SetupService.routes";
 import userAddressRouter from "./BookService/user-address/address.routes";
 import scheduleRouter from "./BookService/create service/ScheduleService/schedule.routes";
 import swaggerUi from "swagger-ui-express";
-import internalDoc from "swagger-jsdoc";
 import YourDetailRouter from "./BookService/create service/YourDetails/AddAdress.Routes";
 import ProfileRouter from "./ServiceProvider Pages/Profile/Routes";
 import UpcomingServiceRouter from "./ServiceProvider Pages/UpcomingServiceRequest/Routes";
@@ -52,7 +51,17 @@ const swaggerOptions = {
         "BookService/create service/ScheduleService/schedule.routes.ts",
         "BookService/create service/YourDetails.AddAddress.Routes.ts",
         "BookService/user-address/address.routes.ts",
+        "Customer Pages/Dashboard/Routes.ts",
+        "Customer Pages/ServiceHistory/Routes,ts",
+        "Customer Pages/MyFavoritePros/Routes.ts",
+        "Customer Pages/My Settings/Routes.ts",
+        "ServiceProvider Pages/NewServiceRequest/Routes.ts",
+        "ServiceProvider Pages/UpcomingServiceRequest/Routes.ts",
+        "ServiceProvider Pages/ServiceHistory/Routes.ts",
+        "ServiceProvider Pages/MyRatings/Routes.ts",
+        "ServiceProvider Pages/BlockCustomer/Routes.ts",
         "Admin Pages/ServiceRequests/Routes.ts",
+        "ServiceProvider Pages/Profile/Routes.ts",
         "Admin Pages/UserManagement/Routes.ts"
 
           ]
